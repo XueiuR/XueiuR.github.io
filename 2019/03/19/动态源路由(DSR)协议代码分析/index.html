@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="源码分析," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="动态源路由(DSR)协议代码分析   大三《网络协议栈分析与设计》课程作业，小组合作完成，由我完成了3.2路由发现部分。 源代码地址 基本原理DSR协议简介&amp;emsp;&amp;emsp;DSR协议（Dynamic Source Routing），即动态源路由协议，是在多跳Ad Hoc无线网络上面使用的，一种简洁而高效的路由协议。而且该协议也是一种经典的按需路由协议，换言之，只有当一个节点需要发送数据包时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动态源路由(DSR)协议代码分析">
+<meta property="og:url" content="http://yoursite.com/2019/03/19/%E5%8A%A8%E6%80%81%E6%BA%90%E8%B7%AF%E7%94%B1(DSR)%E5%8D%8F%E8%AE%AE%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="月如霜的博客">
+<meta property="og:description" content="动态源路由(DSR)协议代码分析   大三《网络协议栈分析与设计》课程作业，小组合作完成，由我完成了3.2路由发现部分。 源代码地址 基本原理DSR协议简介&amp;emsp;&amp;emsp;DSR协议（Dynamic Source Routing），即动态源路由协议，是在多跳Ad Hoc无线网络上面使用的，一种简洁而高效的路由协议。而且该协议也是一种经典的按需路由协议，换言之，只有当一个节点需要发送数据包时">
+<meta property="og:locale">
+<meta property="og:image" content="https://s2.ax1x.com/2019/03/21/A1FfJ0.png">
+<meta property="article:published_time" content="2019-03-19T13:32:52.000Z">
+<meta property="article:modified_time" content="2019-03-21T00:56:20.000Z">
+<meta property="article:author" content="月如霜">
+<meta property="article:tag" content="源码分析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/03/21/A1FfJ0.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/19/动态源路由(DSR)协议代码分析/"/>
+
+
+
+
+
+  <title>动态源路由(DSR)协议代码分析 | 月如霜的博客</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">月如霜的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/19/%E5%8A%A8%E6%80%81%E6%BA%90%E8%B7%AF%E7%94%B1(DSR)%E5%8D%8F%E8%AE%AE%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/Bronya.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="月如霜的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">动态源路由(DSR)协议代码分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-19T21:32:52+08:00">
+                2019-03-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <center><font size ="4">动态源路由(DSR)协议代码分析</font> </center>
+
+<p>大三《网络协议栈分析与设计》课程作业，小组合作完成，由我完成了<code>3.2路由发现</code>部分。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/XueiuR/dsr-uu-0.2">源代码地址</a></p>
+<h1 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h1><h2 id="DSR协议简介"><a href="#DSR协议简介" class="headerlink" title="DSR协议简介"></a>DSR协议简介</h2><p>&emsp;&emsp;DSR协议（Dynamic Source Routing），即动态源路由协议，是在多跳Ad Hoc无线网络上面使用的，一种简洁而高效的路由协议。而且该协议也是一种经典的按需路由协议，换言之，只有当一个节点需要发送数据包时，才会进行“路由发现”和“路由维护”过程。</p>
+<h2 id="DSR协议组成"><a href="#DSR协议组成" class="headerlink" title="DSR协议组成"></a>DSR协议组成</h2><p>&emsp;&emsp;DSR协议主要由“路由发现”及“路由维护”两部分组成，允许节点能够发现及维护到自组织网络中的任意节点。<br>&emsp;&emsp;DSR路由协议的所有状态都是“软状态”，即任何节点的加入或者离开对整个网络的影响都非常小，任何状态的丢失都不会影响DSR路由协议的正确操作，所有状态在丢失之后能够很容易迅速恢复。</p>
+<h3 id="路由发现"><a href="#路由发现" class="headerlink" title="路由发现"></a>路由发现</h3><p>&emsp;&emsp;当某些节点产生了一个新的数据包，想要发送给目的节点时，源节点会将源路由放在数据包的头部，给出该数据包到目的节点所遵循的有序跳数。<br>&emsp;&emsp;通常情况下，发送方会从自己的路由缓存中获得一个合适的源路由；如果没有在缓存中找到路由，它就会启动路由发现协议动态地找到一个到达目的节点的新路由。<br>&emsp;&emsp;具体过程如下：</p>
+<ul>
+<li>路由请求：源节点向邻居节点广播路由请求（RREQ），请求到达目的节点的路由；</li>
+<li>路由记录：记录从源节点到目的节点中的中间节点请求ID，中间节点接收RREQ后，将自己的地址附在路由记录中，由<code>addrs[0]</code>数据维护源路由路径；</li>
+<li>中间节点处理：中间节点维护序列对列表：&lt;源节点地址，请求ID&gt;；</li>
+<li>重复RREQ检测：如果检测到重复的RREQ，则中间节点丢弃该消息；</li>
+<li>路由应答：目的节点收到RREQ后，给源节点返回路由应答（RREP）信息，拷贝RREQ消息中的路由记录并反向存入<code>addrs[]</code>数组，源节点收到RREP后，在本地路由缓存中缓存路由信息。</li>
+</ul>
+<h3 id="路由维护"><a href="#路由维护" class="headerlink" title="路由维护"></a>路由维护</h3><ul>
+<li><p>路由维护会在以下情况下启动：</p>
+<ol>
+<li>当源节点向目的节点发送数据时，需要对当前路由的可用情况进行监控</li>
+<li>当网络拓扑变化导致路由故障时，切换到另一条路由或者重新发起路由发现过程</li>
+</ol>
+</li>
+<li><p>通过逐跳验证机制来判断路由错误信息，从而删除失效的路由：</p>
+<ol>
+<li>如果数据分组被重发了最大次数仍然没有收到下一跳的确认，则节点向源端发送路由错误信息，并指明中断的链路，源端将该路由从路由缓存中删除</li>
+<li>如果源端路由缓存中存在另一条到目的节点的路由，则使用该路由重发分组，否则重新开始路由发现过程。</li>
+</ol>
+</li>
+</ul>
+<h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><h2 id="DSR选项头"><a href="#DSR选项头" class="headerlink" title="DSR选项头"></a>DSR选项头</h2><p>&emsp;&emsp;在<code>dsr-opt.h</code>文件中定义了DSR选项头的信息：  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dsr_opt_hdr</span> &#123;</span></span><br><span class="line">	<span class="keyword">u_int8_t</span> nh;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">if</span> defined(__LITTLE_ENDIAN_BITFIELD)</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">u_int8_t</span> res:<span class="number">7</span>;</span><br><span class="line">	<span class="keyword">u_int8_t</span> f:<span class="number">1</span>;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">elif</span> defined (__BIG_ENDIAN_BITFIELD)</span></span><br><span class="line">	<span class="keyword">u_int8_t</span> f:<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">u_int8_t</span> res:<span class="number">7</span>;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">error</span>  <span class="meta-string">&quot;Please fix &lt;asm/byteorder.h&gt;&quot;</span></span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	<span class="keyword">u_int16_t</span> p_len;	<span class="comment">/* payload length */</span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">int</span> offset_;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">inline</span> <span class="keyword">static</span> <span class="keyword">int</span> &amp;<span class="title">offset</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> offset_;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">inline</span> <span class="keyword">static</span> dsr_opt_hdr *<span class="title">access</span><span class="params">(<span class="keyword">const</span> Packet * p)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> (dsr_opt_hdr *) p-&gt;access(offset_);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> ntohs(p_len) + <span class="keyword">sizeof</span>(struct dsr_opt_hdr);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">endif</span>				<span class="comment">/* NS2 */</span></span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_opt</span> <span class="title">option</span>[0];</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第2行 <code>u_int8_t nh;</code>：Next Header，下一个头部，与IP首部中的协议字段取值相同</li>
+<li>第5行 <code>u_int8_t res:7;</code>：Reserved，保留位，占7位，置为0</li>
+<li>第6行<code>u_int8_t f:1;</code>：Flag，标志位，占1位，在DSR流状态首部中置为1</li>
+<li>第13行<code>u_int16_t p_len;</code>：Payload Length，负载长度，所有DSR选项的总长度</li>
+<li>第28行<code>struct dsr_opt option[0];</code>：Option，DSR选项，以type-length-value的形式编码，记录不同DSR选项的控制信息</li>
+</ul>
+<h2 id="DSR路由请求选项"><a href="#DSR路由请求选项" class="headerlink" title="DSR路由请求选项"></a>DSR路由请求选项</h2><p>&emsp;&emsp;当进行路由发现时，发起端需要把路由请求选项添加到DSR选项首部。<br>&emsp;&emsp;在<code>dsr-rreq.h</code>中定义了路由请求选项：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dsr_rreq_opt</span> &#123;</span></span><br><span class="line">	<span class="keyword">u_int8_t</span> type;</span><br><span class="line">	<span class="keyword">u_int8_t</span> length;</span><br><span class="line">	<span class="keyword">u_int16_t</span> id;</span><br><span class="line">	<span class="keyword">u_int32_t</span> target;</span><br><span class="line">	<span class="keyword">u_int32_t</span> addrs[<span class="number">0</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第2行<code>u_int8_t type;</code>：选项类型</li>
+<li>第3行<code>u_int8_t length;</code>：选项长度</li>
+<li>第4行<code>u_int16_t id;</code>：路由ID号，是发起路由请求时源节点产生的ID号，且每发起一次新的路由请求就会产生一个新的id号，而且id号都是唯一的。如果节点在路由缓存中检测到相同的id号，那么它将直接丢弃这个数据包，防止多次转发；如果没有发现相同的id，则转发该数据包并把ID记录到缓存中的路由请求表中</li>
+<li>第5行<code>u_int32_ target;</code>：目的地址，路由请求想要到达的目标节点的地址</li>
+<li>第6行<code>u_int32_t addrs[0];</code>：记录路由信息，当数据报到达第i个节点时，会在数组的第i项addrs[i]中记录对应的路由信息。</li>
+</ul>
+<h2 id="DSR路由回复选项"><a href="#DSR路由回复选项" class="headerlink" title="DSR路由回复选项"></a>DSR路由回复选项</h2><p>&emsp;&emsp;当路由发现发现目的节点之后，需要发送路由回复选项用于告诉路由请求的发起者到达目的节点的路由。<br>&emsp;&emsp;在<code>dsr-rrep.h</code>中定义了路由回复选项：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dsr_rrep_opt</span> &#123;</span></span><br><span class="line">	<span class="keyword">u_int8_t</span> type;</span><br><span class="line">	<span class="keyword">u_int8_t</span> length;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(__LITTLE_ENDIAN_BITFIELD)</span></span><br><span class="line">	<span class="keyword">u_int8_t</span> res:<span class="number">7</span>;</span><br><span class="line">	<span class="keyword">u_int8_t</span> l:<span class="number">1</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> defined (__BIG_ENDIAN_BITFIELD)</span></span><br><span class="line">	<span class="keyword">u_int8_t</span> l:<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">u_int8_t</span> res:<span class="number">7</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">error</span>  <span class="meta-string">&quot;Please fix &lt;asm/byteorder.h&gt;&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	<span class="keyword">u_int32_t</span> addrs[<span class="number">0</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第5行<code>u_int8_t res:7;</code>：Reserved，保留位，占7位，置为0</li>
+<li>第6行<code>u_int8_t l:1;</code>：Last Hop External，置0表示最后一跳节点在DSR网络内部，置1表示最后一跳在DSR外部。在选取路由时应当遵循以下原则：尽量选取仅利用本网络内部节点就可以到达目的节点的路由，而不经过外部网络。即在路由缓存中优先选择<code>l</code>标志位置0的路由。</li>
+<li>第13行<code>u_int32_t addrs[0];</code>：记录路由回复信息，从源节点到目标节点顺序排列</li>
+</ul>
+<h2 id="DSR路由错误选项"><a href="#DSR路由错误选项" class="headerlink" title="DSR路由错误选项"></a>DSR路由错误选项</h2><p>&emsp;&emsp;路由错误选项用于通知路由的错误。<br>&emsp;&emsp;在<code>dsr-rerr.h</code>中定义了路由错误选项：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dsr_rerr_opt</span> &#123;</span></span><br><span class="line">	<span class="keyword">u_int8_t</span> type;</span><br><span class="line">	<span class="keyword">u_int8_t</span> length;</span><br><span class="line">	<span class="keyword">u_int8_t</span> err_type;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(__LITTLE_ENDIAN_BITFIELD)</span></span><br><span class="line">	<span class="keyword">u_int8_t</span> res:<span class="number">4</span>;</span><br><span class="line">	<span class="keyword">u_int8_t</span> salv:<span class="number">4</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> defined (__BIG_ENDIAN_BITFIELD)</span></span><br><span class="line">	<span class="keyword">u_int8_t</span> res:<span class="number">4</span>;</span><br><span class="line">	<span class="keyword">u_int8_t</span> salv:<span class="number">4</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">error</span>  <span class="meta-string">&quot;Please fix &lt;asm/byteorder.h&gt;&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	<span class="keyword">u_int32_t</span> err_src;</span><br><span class="line">	<span class="keyword">u_int32_t</span> err_dst;</span><br><span class="line">	<span class="keyword">char</span> info[<span class="number">0</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第4行<code>u_int8_t err_type;</code>：Error Type,错误类型</li>
+<li>第6行<code>u_int8_t res:4;</code>：Reserved，保留位，占4位，置为0</li>
+<li>第7行<code>u_int8_t salv:4;</code>：Salvage，占4位，表示该数据包重新发送的次数，根据这个数值来决定该数据包是否应该被丢弃</li>
+<li>第14行<code>u_int32_t err_src;</code>：Error Source，路由错误的源地址</li>
+<li>第15行<code>u_int32_t err_dst;</code>：Error Destination，路由错误的目的地址</li>
+<li>第16行<code>char info[0];</code>：Information，记录路由错误信息</li>
+</ul>
+<h2 id="DSR路由维护选项"><a href="#DSR路由维护选项" class="headerlink" title="DSR路由维护选项"></a>DSR路由维护选项</h2><p>&emsp;&emsp;路由维护选项，也称作源路由选项。当一个节点想到达某一目的节点时，会从路由缓存中取得路由，并将源路由选项加入DSR选项头，具体存入数组<code>addrs[]</code>中，利用其中的路由信息到达目的节点。<br>&emsp;&emsp;在<code>dsr-srt.h</code>中定义了路由维护选项：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dsr_srt_opt</span> &#123;</span></span><br><span class="line">	<span class="keyword">u_int8_t</span> type;</span><br><span class="line">	<span class="keyword">u_int8_t</span> length;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(__LITTLE_ENDIAN_BITFIELD)	</span></span><br><span class="line"><span class="comment">/* <span class="doctag">TODO:</span> Fix bit/byte order */</span></span><br><span class="line">	<span class="keyword">u_int16_t</span> f:<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">u_int16_t</span> l:<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">u_int16_t</span> res:<span class="number">4</span>;</span><br><span class="line">	<span class="keyword">u_int16_t</span> salv:<span class="number">4</span>;</span><br><span class="line">	<span class="keyword">u_int16_t</span> sleft:<span class="number">6</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> defined (__BIG_ENDIAN_BITFIELD)</span></span><br><span class="line">	<span class="keyword">u_int16_t</span> f:<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">u_int16_t</span> l:<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">u_int16_t</span> res:<span class="number">4</span>;</span><br><span class="line">	<span class="keyword">u_int16_t</span> salv:<span class="number">4</span>;</span><br><span class="line">	<span class="keyword">u_int16_t</span> sleft:<span class="number">6</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">error</span>  <span class="meta-string">&quot;Please fix &lt;asm/byteorder.h&gt;&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	<span class="keyword">u_int32_t</span> addrs[<span class="number">0</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第6行<code>u_int16_t f:1;</code>：First Hop External，置0表示第一跳节点在DSR网络内部，置1表示第一跳在DSR外部。</li>
+<li>第7行<code>u_int16_t l:1;</code>：Last Hop External，置0表示最后一跳节点在DSR网络内部，置1表示最后一跳在DSR外部。</li>
+<li>第10行<code>u_int16_t sleft:6;</code>：Segments Left，路由剩余的跳数</li>
+<li>第20行<code>u_int32_t addrs[0];</code>：维护的源路由路径</li>
+</ul>
+<h2 id="DSR数据包"><a href="#DSR数据包" class="headerlink" title="DSR数据包"></a>DSR数据包</h2><p>&emsp;&emsp;在<code>dsr-pkt.h</code>中定义了DSR协议中数据包的结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dsr_pkt</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">src</span>;</span>	<span class="comment">/* IP level data */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">dst</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">nxt_hop</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">prv_hop</span>;</span></span><br><span class="line">	<span class="keyword">int</span> flags;</span><br><span class="line">	<span class="keyword">int</span> salvage;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">hdr_mac</span> *<span class="title">ethh</span>;</span></span><br><span class="line">		<span class="keyword">unsigned</span> <span class="keyword">char</span> *raw;</span><br><span class="line">	&#125; mac;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">hdr_ip</span> <span class="title">ip_data</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">hdr_ip</span> *<span class="title">iph</span>;</span></span><br><span class="line">		<span class="keyword">char</span> *raw;</span><br><span class="line">	&#125; nh;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">ethhdr</span> *<span class="title">ethh</span>;</span></span><br><span class="line">		<span class="keyword">char</span> *raw;</span><br><span class="line">	&#125; mac;</span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">iphdr</span> *<span class="title">iph</span>;</span></span><br><span class="line">		<span class="keyword">char</span> *raw;</span><br><span class="line">	&#125; nh;</span><br><span class="line">	<span class="keyword">char</span> ip_data[<span class="number">60</span>];</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">dsr_opt_hdr</span> *<span class="title">opth</span>;</span></span><br><span class="line">			<span class="keyword">char</span> *raw;</span><br><span class="line">		&#125;;		</span><br><span class="line">		<span class="keyword">char</span> *tail, *end;  </span><br><span class="line">	&#125; dh;</span><br><span class="line">		</span><br><span class="line">	<span class="keyword">int</span> num_rrep_opts, num_rerr_opts, num_rreq_opts, num_ack_opts;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_srt_opt</span> *<span class="title">srt_opt</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_rreq_opt</span> *<span class="title">rreq_opt</span>;</span>	<span class="comment">/* Can only be one */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_rrep_opt</span> *<span class="title">rrep_opt</span>[<span class="title">MAX_RREP_OPTS</span>];</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_rerr_opt</span> *<span class="title">rerr_opt</span>[<span class="title">MAX_RERR_OPTS</span>];</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_ack_opt</span> *<span class="title">ack_opt</span>[<span class="title">MAX_ACK_OPTS</span>];</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_ack_req_opt</span> *<span class="title">ack_req_opt</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_srt</span> *<span class="title">srt</span>;</span>	<span class="comment">/* Source route */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> payload_len;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">	AppData *payload;</span><br><span class="line">	Packet *p;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">	<span class="keyword">char</span> *payload;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sk_buff</span> *<span class="title">skb</span>;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>第2行<code>struct in_addr src;</code>：Source，源端IP地址</p>
+</li>
+<li><p>第3行<code>struct in_addr dst;</code>：Destination，目的端IP地址</p>
+</li>
+<li><p>第4行<code>struct in_addr nxt_hop;</code>：Next Hop，下一跳IP地址</p>
+</li>
+<li><p>第5行<code>struct in_addr prv_hop;</code>：Previous Hop，上一跳IP地址</p>
+</li>
+<li><p>第9-12行<code>union&#123;&#125;mac;</code>：指向以太网帧首部，联合体使我们可以以结构体的方式访问以太网帧首部，或者直接读取以太网帧首部的数据</p>
+</li>
+<li><p>第13行<code>struct hdr_ip ip_data;</code>：IP数据报中的数据</p>
+</li>
+<li><p>第14-17行<code>union&#123;&#125;nh;</code>：指向IP首部，联合体使我们可以以结构体的方式访问IP首部，或者直接读取IP首部的数据</p>
+</li>
+<li><p>第29-35行<code>struct&#123;&#125;dh;</code>：指向DSR首部，联合体使我们可以以结构体的方式访问DSR首部，或者直接读取DSR首部的数据</p>
+</li>
+<li><p>第46行<code>int payload_len;</code>：负载长度</p>
+</li>
+<li><p>第52行<code>char *payload;</code>：负载</p>
+</li>
+<li><p>第53行<code>struct sk_buff *skb;</code>：分片结构体。其中<code>struct sk_buff</code>是Linux网络系统中的核心结构体，所有数据包的封装及解封都是在这个结构体的基础上进行的</p>
+<h2 id="源路由结构"><a href="#源路由结构" class="headerlink" title="源路由结构"></a>源路由结构</h2><p>&emsp;&emsp;源路由是指发送的数据包沿途经过的节点，也就是路由的路径。<br>&emsp;&emsp;在<code>dsr-srt.h    </code>中定义了源路由的结构</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dsr_srt</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">src</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">dst</span>;</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">short</span> flags;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">short</span> index;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> laddrs;	<span class="comment">/* length in bytes if addrs */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">addrs</span>[0];</span>	<span class="comment">/* Intermediate nodes */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li><p>第6行<code>unsigned int laddrs;</code>：Length of Address，地址总长度</p>
+</li>
+<li><p>第7行<code>struct in_addr addrs[0];</code>：存放中间经过的节点</p>
+</li>
+</ul>
+<h2 id="路由请求表"><a href="#路由请求表" class="headerlink" title="路由请求表"></a>路由请求表</h2><p>&emsp;&emsp;在<code>dsr-rreq.c</code>中定义了路由请求表的结构。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rreq_tbl_entry</span> &#123;</span></span><br><span class="line">	<span class="keyword">list_t</span> l;</span><br><span class="line">	<span class="keyword">int</span> state;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">node_addr</span>;</span></span><br><span class="line">	<span class="keyword">int</span> ttl;</span><br><span class="line">	DSRUUTimer *timer;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">tx_time</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">last_used</span>;</span></span><br><span class="line">	<span class="keyword">usecs_t</span> timeout;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> num_rexmts;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">tbl</span> <span class="title">rreq_id_tbl</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第3行<code>int state;</code>：表示路由请求的状态</li>
+<li>第4行<code>struct in_addr node_addr;</code>：路由请求的目的地址</li>
+<li>第8行<code>struct timeval last_used;</code>：从上次被使用，到现在的时间间隔</li>
+</ul>
+<h1 id="函数分析"><a href="#函数分析" class="headerlink" title="函数分析"></a>函数分析</h1><h2 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h2><p><img src="https://s2.ax1x.com/2019/03/21/A1FfJ0.png" alt="流程图"></p>
+<h2 id="路由发现-1"><a href="#路由发现-1" class="headerlink" title="路由发现"></a>路由发现</h2><h3 id="生成数据包"><a href="#生成数据包" class="headerlink" title="生成数据包"></a>生成数据包</h3><p>&emsp;&emsp;在<code>dsr-pkt.c</code>中实现了生成数据包的功能：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct dsr_pkt *<span class="title">dsr_pkt_alloc</span><span class="params">(struct sk_buff *skb)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_pkt</span> *<span class="title">dp</span>;</span></span><br><span class="line">	<span class="keyword">int</span> dsr_opts_len = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	dp = (struct dsr_pkt *)MALLOC(<span class="keyword">sizeof</span>(struct dsr_pkt), GFP_ATOMIC);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memset</span>(dp, <span class="number">0</span>, <span class="keyword">sizeof</span>(struct dsr_pkt));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (skb) &#123;</span><br><span class="line">	<span class="comment">/* 	skb_unlink(skb); */</span></span><br><span class="line"></span><br><span class="line">		dp-&gt;skb = skb;</span><br><span class="line"></span><br><span class="line">		dp-&gt;mac.raw = skb-&gt;mac.raw;</span><br><span class="line">		dp-&gt;nh.iph = skb-&gt;nh.iph;</span><br><span class="line"></span><br><span class="line">		dp-&gt;src.s_addr = skb-&gt;nh.iph-&gt;saddr;</span><br><span class="line">		dp-&gt;dst.s_addr = skb-&gt;nh.iph-&gt;daddr;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (dp-&gt;nh.iph-&gt;protocol == IPPROTO_DSR) &#123;</span><br><span class="line">			<span class="class"><span class="keyword">struct</span> <span class="title">dsr_opt_hdr</span> *<span class="title">opth</span>;</span></span><br><span class="line">			<span class="keyword">int</span> n;</span><br><span class="line"></span><br><span class="line">			opth = (struct dsr_opt_hdr *)(dp-&gt;nh.raw + (dp-&gt;nh.iph-&gt;ihl &lt;&lt; <span class="number">2</span>));</span><br><span class="line">			dsr_opts_len = ntohs(opth-&gt;p_len) + DSR_OPT_HDR_LEN;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (!dsr_pkt_alloc_opts(dp, dsr_opts_len)) &#123;</span><br><span class="line">				FREE(dp);</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="built_in">memcpy</span>(dp-&gt;dh.raw, (<span class="keyword">char</span> *)opth, dsr_opts_len);</span><br><span class="line">			</span><br><span class="line">			n = dsr_opt_parse(dp);</span><br><span class="line">			</span><br><span class="line">			DEBUG(<span class="string">&quot;Packet has %d DSR option(s)\n&quot;</span>, n);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		dp-&gt;payload = dp-&gt;nh.raw +</span><br><span class="line">		    (dp-&gt;nh.iph-&gt;ihl &lt;&lt; <span class="number">2</span>) + dsr_opts_len;</span><br><span class="line"></span><br><span class="line">		dp-&gt;payload_len = ntohs(dp-&gt;nh.iph-&gt;tot_len) -</span><br><span class="line">		    (dp-&gt;nh.iph-&gt;ihl &lt;&lt; <span class="number">2</span>) - dsr_opts_len;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (dp-&gt;payload_len)</span><br><span class="line">			dp-&gt;flags |= PKT_REQUEST_ACK;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>第6-11行，先为数据包申请需要的内存空间，然后将内容全部置零</li>
+<li>第13-51行，如果传入的<code>skb</code>指针不为空，则数据包会根据<code>skb</code>所指向的内容进行初始化</li>
+<li>第52行，函数返回指向这个数据包的指针</li>
+</ul>
+<h3 id="为DSR选项首部分配内存"><a href="#为DSR选项首部分配内存" class="headerlink" title="为DSR选项首部分配内存"></a>为DSR选项首部分配内存</h3><p>&emsp;&emsp;在<code>dsr-opt.c</code>中实现了生成选项首部的功能</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct dsr_opt_hdr *<span class="title">dsr_opt_hdr_add</span><span class="params">(<span class="keyword">char</span> *buf, <span class="keyword">unsigned</span> <span class="keyword">int</span> len, </span></span></span><br><span class="line"><span class="params"><span class="function">				    <span class="keyword">unsigned</span> <span class="keyword">int</span> protocol)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_opt_hdr</span> *<span class="title">opt_hdr</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (len &lt; DSR_OPT_HDR_LEN)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	opt_hdr = (struct dsr_opt_hdr *)buf;</span><br><span class="line"></span><br><span class="line">	opt_hdr-&gt;nh = protocol;</span><br><span class="line">	opt_hdr-&gt;f = <span class="number">0</span>;</span><br><span class="line">	opt_hdr-&gt;res = <span class="number">0</span>;</span><br><span class="line">	opt_hdr-&gt;p_len = htons(len - DSR_OPT_HDR_LEN);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> opt_hdr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第5-6行，判断缓冲区的长度能否放下DSR选项首部，若不能，则返回空指针</li>
+<li>第8-13行，对选项首部信息进行初始化操作</li>
+<li>第15行，函数返回指向这个首部的指针</li>
+</ul>
+<h3 id="DSR协议处理数据包"><a href="#DSR协议处理数据包" class="headerlink" title="DSR协议处理数据包"></a>DSR协议处理数据包</h3><p>&emsp;&emsp;每个节点都需要与其他节点进行数据包的交互，这就涉及到了对于接收和发送数据包的处理，这两部分功能的实现定义在了<code>dsr-io.c</code>中</p>
+<h4 id="接收数据包"><a href="#接收数据包" class="headerlink" title="接收数据包"></a>接收数据包</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> NSCLASS <span class="title">dsr_recv</span><span class="params">(struct dsr_pkt *dp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>, action;</span><br><span class="line">	<span class="keyword">int</span> mask = DSR_PKT_NONE;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Process DSR Options */</span></span><br><span class="line">	action = dsr_opt_recv(dp);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Add mac address of previous hop to the neighbor table */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (dp-&gt;flags &amp; PKT_PROMISC_RECV) &#123;</span><br><span class="line">		dsr_pkt_free(dp);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; DSR_PKT_ACTION_LAST; i++) &#123;</span><br><span class="line">	</span><br><span class="line">		<span class="keyword">switch</span> (action &amp; mask) &#123;</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_NONE:</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_DROP:</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_ERROR:</span><br><span class="line">			DEBUG(<span class="string">&quot;DSR_PKT_DROP or DSR_PKT_ERROR\n&quot;</span>);</span><br><span class="line">			dsr_pkt_free(dp);</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_SEND_ACK:</span><br><span class="line">			<span class="comment">/* Moved to dsr-ack.c */</span></span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_SRT_REMOVE:</span><br><span class="line">			<span class="comment">//DEBUG(&quot;Remove source route\n&quot;);</span></span><br><span class="line">			<span class="comment">// Hmm, we remove the DSR options when we deliver a</span></span><br><span class="line">			<span class="comment">//packet</span></span><br><span class="line">			<span class="comment">//dsr_opt_remove(dp);</span></span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_FORWARD:</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">			<span class="keyword">if</span> (dp-&gt;nh.iph-&gt;ttl() &lt; <span class="number">1</span>)</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">			<span class="keyword">if</span> (dp-&gt;nh.iph-&gt;ttl &lt; <span class="number">1</span>)</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">			&#123;</span><br><span class="line">				DEBUG(<span class="string">&quot;ttl=0, dropping!\n&quot;</span>);</span><br><span class="line">				dsr_pkt_free(dp);</span><br><span class="line">				<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				DEBUG(<span class="string">&quot;Forwarding %s %s nh %s\n&quot;</span>,</span><br><span class="line">				      print_ip(dp-&gt;src),</span><br><span class="line">				      print_ip(dp-&gt;dst), print_ip(dp-&gt;nxt_hop));</span><br><span class="line">				XMIT(dp);</span><br><span class="line">				<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_FORWARD_RREQ:</span><br><span class="line">			XMIT(dp);</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_SEND_RREP:</span><br><span class="line">			<span class="comment">/* In dsr-rrep.c */</span></span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_SEND_ICMP:</span><br><span class="line">			DEBUG(<span class="string">&quot;Send ICMP\n&quot;</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_SEND_BUFFERED:</span><br><span class="line">			<span class="keyword">if</span> (dp-&gt;rrep_opt) &#123;</span><br><span class="line">				<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">rrep_srt_dst</span>;</span></span><br><span class="line">				<span class="keyword">int</span> i;</span><br><span class="line">				</span><br><span class="line">				<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; dp-&gt;num_rrep_opts; i++) &#123;</span><br><span class="line">					rrep_srt_dst.s_addr = dp-&gt;rrep_opt[i]-&gt;addrs[DSR_RREP_ADDRS_LEN(dp-&gt;rrep_opt[i]) / <span class="keyword">sizeof</span>(struct in_addr)];</span><br><span class="line">					</span><br><span class="line">					send_buf_set_verdict(SEND_BUF_SEND, rrep_srt_dst);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> DSR_PKT_DELIVER:</span><br><span class="line">			DEBUG(<span class="string">&quot;Deliver to DSR device\n&quot;</span>);</span><br><span class="line">			DELIVER(dp);</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			DEBUG(<span class="string">&quot;Unknown pkt action\n&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		mask = (mask &lt;&lt; <span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	dsr_pkt_free(dp);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第18-24行，根据选项中的信息，如果数据包是空、丢失、错误，则返回错误信息，并释放该数据包的空间</li>
+<li>第34-52行，如果是转发的数据包，我们会对数据包的TTL进行判断：如果TTL为0，需要输出信息，并且释放掉该数据包的空间，不再进行转发操作；否则，我们输出其源IP地址、目的IP地址及下一跳IP地址，并执行<code>XMIT()</code>操作（后文介绍），传输数据包。</li>
+<li>第86行，如果都不满足的话，就说明这个数据包的选项信息是未知的，我们只需要释放掉这个数据包即可</li>
+</ul>
+<h4 id="发送数据包"><a href="#发送数据包" class="headerlink" title="发送数据包"></a>发送数据包</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> NSCLASS <span class="title">dsr_start_xmit</span><span class="params">(struct dsr_pkt *dp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> res;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not allocate DSR packet\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	dp-&gt;srt = dsr_rtc_find(dp-&gt;src, dp-&gt;dst);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (dp-&gt;srt) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (dsr_srt_add(dp) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">			DEBUG(<span class="string">&quot;Could not add source route\n&quot;</span>);</span><br><span class="line">			<span class="keyword">goto</span> out;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">/* Send packet */</span></span><br><span class="line"></span><br><span class="line">		XMIT(dp);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">		res = send_buf_enqueue_packet(dp, &amp;DSRUU::ns_xmit);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">		res = send_buf_enqueue_packet(dp, &amp;dsr_dev_xmit);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">		<span class="keyword">if</span> (res &lt; <span class="number">0</span>) &#123;</span><br><span class="line">			DEBUG(<span class="string">&quot;Queueing failed!\n&quot;</span>);</span><br><span class="line">			<span class="keyword">goto</span> out;</span><br><span class="line">		&#125;</span><br><span class="line">		res = dsr_rreq_route_discovery(dp-&gt;dst);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (res &lt; <span class="number">0</span>)</span><br><span class="line">			DEBUG(<span class="string">&quot;RREQ Transmission failed...&quot;</span>);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">      out:</span><br><span class="line">	dsr_pkt_free(dp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第10行，执行<code>dsr_rtc_find()</code>功能，根据数据包来寻找是否存在到达目的节点的源路由</li>
+<li>第12-22行，如果有，则在添加源路由成功的条件下，执行<code>XMIT()</code>操作（后文介绍），发送数据包</li>
+<li>第24-40行，如果没有，则将这个数据包添加到发送队列中，并去进行路由发现</li>
+</ul>
+<h3 id="DSR处理源路由请求"><a href="#DSR处理源路由请求" class="headerlink" title="DSR处理源路由请求"></a>DSR处理源路由请求</h3><p>&emsp;&emsp;在知道路由路径的情况下，就需要将数据包发送到目标地址，我们先看一下如何处理源路由选项。<br>&emsp;&emsp;在<code>dsr-srt.c</code>中实现了对源路由选项的处理功能。</p>
+<h4 id="添加源路由选项"><a href="#添加源路由选项" class="headerlink" title="添加源路由选项"></a>添加源路由选项</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct dsr_srt_opt *<span class="title">dsr_srt_opt_add</span><span class="params">(<span class="keyword">char</span> *buf, <span class="keyword">int</span> len, <span class="keyword">int</span> flags, </span></span></span><br><span class="line"><span class="params"><span class="function">				    <span class="keyword">int</span> salvage, struct dsr_srt *srt)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_srt_opt</span> *<span class="title">srt_opt</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (len &lt; (<span class="keyword">int</span>)DSR_SRT_OPT_LEN(srt))</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	srt_opt = (struct dsr_srt_opt *)buf;</span><br><span class="line"></span><br><span class="line">	srt_opt-&gt;type = DSR_OPT_SRT;</span><br><span class="line">	srt_opt-&gt;length = srt-&gt;laddrs + <span class="number">2</span>;</span><br><span class="line">	srt_opt-&gt;f = (flags &amp; SRT_FIRST_HOP_EXT) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">	srt_opt-&gt;l = (flags &amp; SRT_LAST_HOP_EXT) ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">	srt_opt-&gt;res = <span class="number">0</span>;</span><br><span class="line">	srt_opt-&gt;salv = salvage;</span><br><span class="line">	srt_opt-&gt;sleft = (srt-&gt;laddrs / <span class="keyword">sizeof</span>(struct in_addr));</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memcpy</span>(srt_opt-&gt;addrs, srt-&gt;addrs, srt-&gt;laddrs);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> srt_opt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第6-7行，判断缓冲区的空间是否足够添加该选项</li>
+<li>第9-17行，若足够，则为该选项在内存中分配空间，然后初始化相关属性，包括：类型、长度等</li>
+<li>第19行，复制地址列表</li>
+<li>第21行，返回指向该选型的指针</li>
+</ul>
+<h4 id="路由缩减"><a href="#路由缩减" class="headerlink" title="路由缩减"></a>路由缩减</h4><p>&emsp;&emsp;路由缩减，即缩短路由路径，当节点监听到一个数据包，但该数据包的下一跳不是它自己时，节点就会在这个数据包的剩余源路由中搜索是否有自身的IP地址，若存在，则意味着路由可以缩减。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> NSCLASS <span class="title">dsr_srt_opt_recv</span><span class="params">(struct dsr_pkt *dp, struct dsr_srt_opt *srt_opt)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">next_hop_intended</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">myaddr</span> =</span> my_addr();</span><br><span class="line">	<span class="keyword">int</span> n;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp || !srt_opt)</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_ERROR;</span><br><span class="line">	</span><br><span class="line">	dp-&gt;srt_opt = srt_opt;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Automatic route shortening - Check if this node is the</span></span><br><span class="line"><span class="comment">	 * intended next hop. If not, is it part of the remaining</span></span><br><span class="line"><span class="comment">	 * source route? */</span></span><br><span class="line">	<span class="keyword">if</span> (next_hop_intended.s_addr != myaddr.s_addr &amp;&amp;</span><br><span class="line">	    dsr_srt_find_addr(dp-&gt;srt, myaddr, srt_opt-&gt;sleft) &amp;&amp;</span><br><span class="line">	    !grat_rrep_tbl_find(dp-&gt;src, dp-&gt;prv_hop)) &#123;</span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">dsr_srt</span> *<span class="title">srt</span>, *<span class="title">srt_cut</span>;</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Send Grat RREP */</span></span><br><span class="line">		DEBUG(<span class="string">&quot;Send Gratuitous RREP to %s\n&quot;</span>, print_ip(dp-&gt;src));</span><br><span class="line"></span><br><span class="line">		srt_cut = dsr_srt_shortcut(dp-&gt;srt, dp-&gt;prv_hop, myaddr);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!srt_cut)</span><br><span class="line">			<span class="keyword">return</span> DSR_PKT_DROP;</span><br><span class="line"></span><br><span class="line">		DEBUG(<span class="string">&quot;shortcut: %s\n&quot;</span>, print_srt(srt_cut));</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* srt = dsr_rtc_find(myaddr, dp-&gt;src); */</span></span><br><span class="line">		<span class="keyword">if</span> (srt_cut-&gt;laddrs / <span class="keyword">sizeof</span>(struct in_addr) == <span class="number">0</span>)</span><br><span class="line">			srt = dsr_srt_new_rev(srt_cut);</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			srt = dsr_srt_new_split_rev(srt_cut, myaddr);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!srt) &#123;</span><br><span class="line">			DEBUG(<span class="string">&quot;No route to %s\n&quot;</span>, print_ip(dp-&gt;src));</span><br><span class="line">			FREE(srt_cut);</span><br><span class="line">			<span class="keyword">return</span> DSR_PKT_DROP;</span><br><span class="line">		&#125;</span><br><span class="line">		DEBUG(<span class="string">&quot;my srt: %s\n&quot;</span>, print_srt(srt));</span><br><span class="line"></span><br><span class="line">		grat_rrep_tbl_add(dp-&gt;src, dp-&gt;prv_hop);</span><br><span class="line"></span><br><span class="line">		dsr_rrep_send(srt, srt_cut);</span><br><span class="line"></span><br><span class="line">		FREE(srt_cut);</span><br><span class="line">		FREE(srt);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (dp-&gt;flags &amp; PKT_PROMISC_RECV)</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_DROP;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (srt_opt-&gt;sleft == <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_SRT_REMOVE;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (srt_opt-&gt;sleft &gt; n) &#123;</span><br><span class="line">		<span class="comment">// Send ICMP parameter error</span></span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_SEND_ICMP;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	srt_opt-&gt;sleft--;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* <span class="doctag">TODO:</span> check for multicast address in next hop or dst */</span></span><br><span class="line">	<span class="comment">/* <span class="doctag">TODO:</span> check MTU and compare to pkt size */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> DSR_PKT_FORWARD;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第15-17行，对路由缩减的条件进行判断：如果下一跳的地址不是当前地址，且源路由中存在当前地址且其不在缩减列表中，则可以进行路由缩减。</li>
+<li>第43-45行，在路由缩减列表中添加本次路由，并且发送一个路由回复用于通知新的路由变更。</li>
+<li>第67行，如果不能进行路由缩减，则转发数据包。</li>
+</ul>
+<h3 id="生成路由请求"><a href="#生成路由请求" class="headerlink" title="生成路由请求"></a>生成路由请求</h3><h4 id="路由发现请求"><a href="#路由发现请求" class="headerlink" title="路由发现请求"></a>路由发现请求</h4><p>&emsp;&emsp;当一个节点不知道应该如何到达目的节点时，就会采用路由发现来寻找路由。在<code>dsr-rreq.c</code>中得以实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> NSCLASS <span class="title">dsr_rreq_route_discovery</span><span class="params">(struct in_addr target)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rreq_tbl_entry</span> *<span class="title">e</span>;</span></span><br><span class="line">	<span class="keyword">int</span> ttl, res = <span class="number">0</span>;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">expires</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	TTL_START 1</span></span><br><span class="line"></span><br><span class="line">	DSR_WRITE_LOCK(&amp;rreq_tbl.lock);</span><br><span class="line"></span><br><span class="line">	e = (struct rreq_tbl_entry *)__tbl_find(&amp;rreq_tbl, &amp;target, crit_addr);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!e)</span><br><span class="line">		e = __rreq_tbl_add(target);</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">/* Put it last in the table */</span></span><br><span class="line">		__tbl_detach(&amp;rreq_tbl, &amp;e-&gt;l);</span><br><span class="line">		__tbl_add_tail(&amp;rreq_tbl, &amp;e-&gt;l);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!e) &#123;</span><br><span class="line">		res = -ENOMEM;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (e-&gt;state == STATE_IN_ROUTE_DISC) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Route discovery for %s already in progress\n&quot;</span>,</span><br><span class="line">		      print_ip(target));</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line">	DEBUG(<span class="string">&quot;Route discovery for %s\n&quot;</span>, print_ip(target));</span><br><span class="line"></span><br><span class="line">	gettime(&amp;e-&gt;last_used);</span><br><span class="line">	e-&gt;ttl = ttl = TTL_START;</span><br><span class="line">	<span class="comment">/* The draft does not actually specify how these Request Timeout values</span></span><br><span class="line"><span class="comment">	 * should be used... ??? I am just guessing here. */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (e-&gt;ttl == <span class="number">1</span>)</span><br><span class="line">		e-&gt;timeout = ConfValToUsecs(NonpropRequestTimeout);</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		e-&gt;timeout = ConfValToUsecs(RequestPeriod);</span><br><span class="line"></span><br><span class="line">	e-&gt;state = STATE_IN_ROUTE_DISC;</span><br><span class="line">	e-&gt;num_rexmts = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	expires = e-&gt;last_used;</span><br><span class="line">	timeval_add_usecs(&amp;expires, e-&gt;timeout);</span><br><span class="line"></span><br><span class="line">	set_timer(e-&gt;timer, &amp;expires);</span><br><span class="line"></span><br><span class="line">	DSR_WRITE_UNLOCK(&amp;rreq_tbl.lock);</span><br><span class="line"></span><br><span class="line">	dsr_rreq_send(target, ttl);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">      out:</span><br><span class="line">	DSR_WRITE_UNLOCK(&amp;rreq_tbl.lock);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第11行，调用<code>__tbl_find()</code>函数（后文介绍），在路由请求表中寻找是否已经有相同目的地址的路由请求</li>
+<li>第13-19行，如果没有相同的路由请求，就调用<code>__rreq_tbl_add()</code>（后文介绍）把该请求添加到路由请求表中；如果有，则调用<code>__tbl_detach()</code>删除原先的路由请求，并调用<code>__tbl_add_tail()</code>把新的路由请求添加到路由请求表的末尾</li>
+<li>第38-41行，设置该路由请求选项的TTL，一旦TTL为0，则取消该路由请求</li>
+<li>第46-47行，设置失效时间<code>expires</code></li>
+</ul>
+<h4 id="查询路由请求表"><a href="#查询路由请求表" class="headerlink" title="查询路由请求表"></a>查询路由请求表</h4><p>&emsp;&emsp;在<code>dsr-rreq.c</code>和<code>tbl.h</code>中，有：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*<span class="keyword">criteria_t</span>)</span> <span class="params">(<span class="keyword">void</span> *elm, <span class="keyword">void</span> *data)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">crit_addr</span><span class="params">(<span class="keyword">void</span> *pos, <span class="keyword">void</span> *data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rreq_tbl_entry</span> *<span class="title">e</span> =</span> (struct rreq_tbl_entry *)pos;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> *<span class="title">a</span> =</span> (struct in_addr *)data;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (e-&gt;node_addr.s_addr == a-&gt;s_addr)</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> *__tbl_find(struct tbl *t, <span class="keyword">void</span> *id, <span class="keyword">criteria_t</span> crit)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">list_t</span> *pos;</span><br><span class="line"></span><br><span class="line">	list_for_each(pos, &amp;t-&gt;head) &#123;</span><br><span class="line">		<span class="keyword">if</span> (crit(pos, id))</span><br><span class="line">			<span class="keyword">return</span> pos;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第1行，<code>criteria_t</code>是参数为两个void类型的指针、返回值为int类型的指针</li>
+<li>第2-10行，<code>crit_addr()</code>函数用于判断路由请求表项的目的地址和传进来参数的地址是否匹配</li>
+<li>第11-19行，<code>__tbl_find</code>用于遍历整个路由请求表，寻找是否有和参数id相同的地址，若存在则返回指向匹配元素的指针，不存在则返回NULL</li>
+</ul>
+<h4 id="添加路由请求表项"><a href="#添加路由请求表项" class="headerlink" title="添加路由请求表项"></a>添加路由请求表项</h4><p>&emsp;&emsp;在<code>dsr-rreq.c</code>中得以实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rreq_tbl_entry</span> *<span class="title">NSCLASS</span> __<span class="title">rreq_tbl_entry_create</span>(<span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">node_addr</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rreq_tbl_entry</span> *<span class="title">e</span>;</span></span><br><span class="line"></span><br><span class="line">	e = (struct rreq_tbl_entry *)MALLOC(<span class="keyword">sizeof</span>(struct rreq_tbl_entry),</span><br><span class="line">					    GFP_ATOMIC);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!e)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	e-&gt;state = STATE_IDLE;</span><br><span class="line">	e-&gt;node_addr = node_addr;</span><br><span class="line">	e-&gt;ttl = <span class="number">0</span>;</span><br><span class="line">	<span class="built_in">memset</span>(&amp;e-&gt;tx_time, <span class="number">0</span>, <span class="keyword">sizeof</span>(struct timeval));;</span><br><span class="line">	e-&gt;num_rexmts = <span class="number">0</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">	e-&gt;timer = <span class="keyword">new</span> DSRUUTimer(<span class="keyword">this</span>, <span class="string">&quot;RREQTblTimer&quot;</span>);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">	e-&gt;timer = MALLOC(<span class="keyword">sizeof</span>(DSRUUTimer), GFP_ATOMIC);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!e-&gt;timer) &#123;</span><br><span class="line">		FREE(e);</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	init_timer(e-&gt;timer);</span><br><span class="line"></span><br><span class="line">	e-&gt;timer-&gt;function = &amp;NSCLASS rreq_tbl_timeout;</span><br><span class="line">	e-&gt;timer-&gt;data = (<span class="keyword">unsigned</span> <span class="keyword">long</span>)e;</span><br><span class="line"></span><br><span class="line">	INIT_TBL(&amp;e-&gt;rreq_id_tbl, ConfVal(RequestTableIds));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> e;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rreq_tbl_entry</span> *<span class="title">NSCLASS</span> __<span class="title">rreq_tbl_add</span>(<span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">node_addr</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rreq_tbl_entry</span> *<span class="title">e</span>;</span></span><br><span class="line"></span><br><span class="line">	e = __rreq_tbl_entry_create(node_addr);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!e)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (TBL_FULL(&amp;rreq_tbl)) &#123;</span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">rreq_tbl_entry</span> *<span class="title">f</span>;</span></span><br><span class="line"></span><br><span class="line">		f = (struct rreq_tbl_entry *)TBL_FIRST(&amp;rreq_tbl);</span><br><span class="line"></span><br><span class="line">		__tbl_detach(&amp;rreq_tbl, &amp;f-&gt;l);</span><br><span class="line"></span><br><span class="line">		del_timer_sync(f-&gt;timer);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">		<span class="keyword">delete</span> f-&gt;timer;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">		FREE(f-&gt;timer);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">		tbl_flush(&amp;f-&gt;rreq_id_tbl, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">		FREE(f);</span><br><span class="line">	&#125;</span><br><span class="line">	__tbl_add_tail(&amp;rreq_tbl, &amp;e-&gt;l);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> e;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第24行，当我们调用<code>__rreq_tbl_add()</code>函数的时候，首先会调用<code>__rreq_tbl_entry_create()</code></li>
+<li>第1-21行，给表项分配一段内存，并对表项内容进行初始化操作</li>
+<li>第26-35行，查看请求表的情况，看是否已满，若为满，则将请求表中的第一个表项删除</li>
+<li>第36行，把路由请求添加到请求表的结尾处</li>
+</ul>
+<h4 id="发送路由请求"><a href="#发送路由请求" class="headerlink" title="发送路由请求"></a>发送路由请求</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> NSCLASS <span class="title">dsr_rreq_send</span><span class="params">(struct in_addr target, <span class="keyword">int</span> ttl)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_pkt</span> *<span class="title">dp</span>;</span></span><br><span class="line">	<span class="keyword">char</span> *buf;</span><br><span class="line">	<span class="keyword">int</span> len = DSR_OPT_HDR_LEN + DSR_RREQ_HDR_LEN;</span><br><span class="line"></span><br><span class="line">	dp = dsr_pkt_alloc(<span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not allocate DSR packet\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	dp-&gt;dst.s_addr = DSR_BROADCAST;</span><br><span class="line">	dp-&gt;nxt_hop.s_addr = DSR_BROADCAST;</span><br><span class="line">	dp-&gt;src = my_addr();</span><br><span class="line"></span><br><span class="line">	buf = dsr_pkt_alloc_opts(dp, len);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!buf)</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line"></span><br><span class="line">	dp-&gt;nh.iph =</span><br><span class="line">	    dsr_build_ip(dp, dp-&gt;src, dp-&gt;dst, IP_HDR_LEN, IP_HDR_LEN + len,</span><br><span class="line">			 IPPROTO_DSR, ttl);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;nh.iph)</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line"></span><br><span class="line">	dp-&gt;dh.opth = dsr_opt_hdr_add(buf, len, DSR_NO_NEXT_HDR_TYPE);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;dh.opth) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not create DSR opt header\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	buf += DSR_OPT_HDR_LEN;</span><br><span class="line">	len -= DSR_OPT_HDR_LEN;</span><br><span class="line"></span><br><span class="line">	dp-&gt;rreq_opt = dsr_rreq_opt_add(buf, len, target, ++rreq_seqno);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;rreq_opt) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not create RREQ opt\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">	DEBUG(<span class="string">&quot;Sending RREQ src=%s dst=%s target=%s ttl=%d iph-&gt;saddr()=%d\n&quot;</span>,</span><br><span class="line">	      print_ip(dp-&gt;src), print_ip(dp-&gt;dst), print_ip(target), ttl,</span><br><span class="line">	      dp-&gt;nh.iph-&gt;saddr());</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	dp-&gt;flags |= PKT_XMIT_JITTER;</span><br><span class="line"></span><br><span class="line">	XMIT(dp);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">      out_err:</span><br><span class="line">	dsr_pkt_free(dp);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>###发送路由请求</p>
+<h4 id="添加路由请求选项"><a href="#添加路由请求选项" class="headerlink" title="添加路由请求选项"></a>添加路由请求选项</h4><p>&emsp;&emsp;在<code>dsr-rreq.c</code>中得以实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> struct dsr_rreq_opt *<span class="title">dsr_rreq_opt_add</span><span class="params">(<span class="keyword">char</span> *buf, <span class="keyword">unsigned</span> <span class="keyword">int</span> len,</span></span></span><br><span class="line"><span class="params"><span class="function">					     struct in_addr target,</span></span></span><br><span class="line"><span class="params"><span class="function">					     <span class="keyword">unsigned</span> <span class="keyword">int</span> seqno)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_rreq_opt</span> *<span class="title">rreq_opt</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!buf || len &lt; DSR_RREQ_HDR_LEN)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	rreq_opt = (struct dsr_rreq_opt *)buf;</span><br><span class="line"></span><br><span class="line">	rreq_opt-&gt;type = DSR_OPT_RREQ;</span><br><span class="line">	rreq_opt-&gt;length = <span class="number">6</span>;</span><br><span class="line">	rreq_opt-&gt;id = htons(seqno);</span><br><span class="line">	rreq_opt-&gt;target = target.s_addr;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> rreq_opt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>与添加DSR选项首部类似，判断缓冲区空间是否足够，如果足够，就把选项指针指向缓冲区，并初始化id、长度、目的地址</li>
+</ul>
+<h4 id="发送路由请求-1"><a href="#发送路由请求-1" class="headerlink" title="发送路由请求"></a>发送路由请求</h4><p>&emsp;&emsp;在<code>dsr-rreq.c</code>中得以实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> NSCLASS <span class="title">dsr_rreq_send</span><span class="params">(struct in_addr target, <span class="keyword">int</span> ttl)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_pkt</span> *<span class="title">dp</span>;</span></span><br><span class="line">	<span class="keyword">char</span> *buf;</span><br><span class="line">	<span class="keyword">int</span> len = DSR_OPT_HDR_LEN + DSR_RREQ_HDR_LEN;</span><br><span class="line"></span><br><span class="line">	dp = dsr_pkt_alloc(<span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not allocate DSR packet\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	dp-&gt;dst.s_addr = DSR_BROADCAST;</span><br><span class="line">	dp-&gt;nxt_hop.s_addr = DSR_BROADCAST;</span><br><span class="line">	dp-&gt;src = my_addr();</span><br><span class="line"></span><br><span class="line">	buf = dsr_pkt_alloc_opts(dp, len);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!buf)</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line"></span><br><span class="line">	dp-&gt;nh.iph =</span><br><span class="line">	    dsr_build_ip(dp, dp-&gt;src, dp-&gt;dst, IP_HDR_LEN, IP_HDR_LEN + len,</span><br><span class="line">			 IPPROTO_DSR, ttl);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;nh.iph)</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line"></span><br><span class="line">	dp-&gt;dh.opth = dsr_opt_hdr_add(buf, len, DSR_NO_NEXT_HDR_TYPE);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;dh.opth) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not create DSR opt header\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	buf += DSR_OPT_HDR_LEN;</span><br><span class="line">	len -= DSR_OPT_HDR_LEN;</span><br><span class="line"></span><br><span class="line">	dp-&gt;rreq_opt = dsr_rreq_opt_add(buf, len, target, ++rreq_seqno);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;rreq_opt) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not create RREQ opt\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">	DEBUG(<span class="string">&quot;Sending RREQ src=%s dst=%s target=%s ttl=%d iph-&gt;saddr()=%d\n&quot;</span>,</span><br><span class="line">	      print_ip(dp-&gt;src), print_ip(dp-&gt;dst), print_ip(target), ttl,</span><br><span class="line">	      dp-&gt;nh.iph-&gt;saddr());</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	dp-&gt;flags |= PKT_XMIT_JITTER;</span><br><span class="line"></span><br><span class="line">	XMIT(dp);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">      out_err:</span><br><span class="line">	dsr_pkt_free(dp);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>第7行，为该DSR数据包分配内存地址</li>
+<li>第13-15行，将数据包的目的地址、下一跳的地址均设置为广播地址，将源地址设置为自身地址</li>
+<li>第24-25行，构造数据包的IP首部，包括源地址、目的地址、协议类型和负载长度等</li>
+<li>第30行，对DSR选项首部的构造</li>
+<li>第40行，调用<code>dsr_rreq_opt_add()</code>函数，添加路由请求选项</li>
+<li>第54行，调用<code>XMIT()</code>函数（分析见后），将数据包传输出去</li>
+</ul>
+<h3 id="发送数据包-1"><a href="#发送数据包-1" class="headerlink" title="发送数据包"></a>发送数据包</h3><p><code>XMIT()</code>是<code>dsr_dev_xmit()</code>的宏定义，在<code>dsr-dev.c</code>中实现:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">dsr_dev_xmit</span><span class="params">(struct dsr_pkt *dp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sk_buff</span> *<span class="title">skb</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">net_device</span> *<span class="title">slave_dev</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">dst</span>;</span></span><br><span class="line">	<span class="keyword">int</span> res = <span class="number">-1</span>;</span><br><span class="line">	<span class="keyword">int</span> len = <span class="number">0</span>;	</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp)</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (dp-&gt;flags &amp; PKT_REQUEST_ACK)</span><br><span class="line">		maint_buf_add(dp);</span><br><span class="line"></span><br><span class="line">	dsr_node_lock(dsr_node);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (dsr_node-&gt;slave_dev)</span><br><span class="line">		slave_dev = dsr_node-&gt;slave_dev;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		dsr_node_unlock(dsr_node);</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line">	&#125;</span><br><span class="line">	dsr_node_unlock(dsr_node);</span><br><span class="line"></span><br><span class="line">	skb = dsr_skb_create(dp, slave_dev);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!skb) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not create skb!\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Create hardware header */</span></span><br><span class="line">	<span class="keyword">if</span> (dsr_hw_header_create(dp, skb) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not create hardware header\n&quot;</span>);</span><br><span class="line">		dev_kfree_skb_any(skb);</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	len = skb-&gt;len;</span><br><span class="line">	dst.s_addr = skb-&gt;nh.iph-&gt;daddr;</span><br><span class="line">	</span><br><span class="line">	DEBUG(<span class="string">&quot;Sending %d bytes data_len=%d %s : %s\n&quot;</span>,</span><br><span class="line">	      len, skb-&gt;data_len,</span><br><span class="line">	      print_eth(skb-&gt;mac.raw),</span><br><span class="line">	      print_ip(dst));</span><br><span class="line">		</span><br><span class="line">	<span class="comment">/* <span class="doctag">TODO:</span> Should consider using ip_finish_output instead */</span></span><br><span class="line">	res = dev_queue_xmit(skb);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (res &lt; <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line"></span><br><span class="line">	dsr_node_lock(dsr_node);</span><br><span class="line">	dsr_node-&gt;stats.tx_packets++;</span><br><span class="line">	dsr_node-&gt;stats.tx_bytes += len;</span><br><span class="line">	dsr_node_unlock(dsr_node);</span><br><span class="line"></span><br><span class="line">out_err:</span><br><span class="line">	dsr_pkt_free(dp);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第17行，根据DSR数据包的数据创建一个<code>sk_buff</code>数据包</li>
+<li>第33-45行，完成MAC首部的封装</li>
+<li>第48行，调用<code>dev_queue_xmit()</code>将数据包发送出去</li>
+<li>第54-55行，统计发送的数据包信息</li>
+<li>第59行，如果中间某个过程产生错误，则释放该数据包的空间</li>
+</ul>
+<h3 id="接收路由请求"><a href="#接收路由请求" class="headerlink" title="接收路由请求"></a>接收路由请求</h3><p>&emsp;&emsp;当一个节点收到的数据包中包含路由发现请求时，这个节点必须通过以下步骤处理：</p>
+<ul>
+<li>如果路由请求的目的地址与该结点的IP地址一致，则这个节点就需要发送一个路由回复给路由请求的发起者</li>
+<li>如果路由请求的目的地址与该结点的IP地址不一致，则这个节点就需要在自己的已接收路由请求缓存中搜索是否已经发出过相同的请求。如果已经发出过，则必须丢弃该数据包防止重复转发</li>
+<li>如果没有发送过：<ol>
+<li>该几点在已接收路由请求缓存中添加这个请求</li>
+<li>将自己的IP地址添加到路由请求选项的Addrs[]中，并更改选项中length的值</li>
+<li>在自己的路由缓存中搜索是否有到达目的节点的路由，若有，则发送“缓存路由回复”给源地址；若没有，则以链路层广播的形式将这个修改后的数据包发送出去</li>
+</ol>
+</li>
+</ul>
+<p>&emsp;&emsp;产生路由回复的功能在<code>dsr-rreq.c</code>中得以实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> NSCLASS <span class="title">dsr_rreq_opt_recv</span><span class="params">(struct dsr_pkt *dp, struct dsr_rreq_opt *rreq_opt)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">myaddr</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">trg</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_srt</span> *<span class="title">srt_rev</span>, *<span class="title">srt_rc</span>;</span></span><br><span class="line">	<span class="keyword">int</span> action = DSR_PKT_NONE;</span><br><span class="line">	<span class="keyword">int</span> i, n;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp || !rreq_opt || dp-&gt;flags &amp; PKT_PROMISC_RECV)</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_DROP;</span><br><span class="line">	</span><br><span class="line">	dp-&gt;num_rreq_opts++;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> (dp-&gt;num_rreq_opts &gt; <span class="number">1</span>) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;More than one RREQ opt!!! - Ignoring\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_ERROR;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	dp-&gt;rreq_opt = rreq_opt;</span><br><span class="line"></span><br><span class="line">	myaddr = my_addr();</span><br><span class="line">	</span><br><span class="line">	trg.s_addr = rreq_opt-&gt;target;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (dsr_rreq_duplicate(dp-&gt;src, trg, ntohs(rreq_opt-&gt;id))) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Duplicate RREQ from %s\n&quot;</span>, print_ip(dp-&gt;src));</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_DROP;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	rreq_tbl_add_id(dp-&gt;src, trg, ntohs(rreq_opt-&gt;id));</span><br><span class="line"></span><br><span class="line">	dp-&gt;srt = dsr_srt_new(dp-&gt;src, myaddr, DSR_RREQ_ADDRS_LEN(rreq_opt),</span><br><span class="line">			      (<span class="keyword">char</span> *)rreq_opt-&gt;addrs);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;srt) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not extract source route\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_ERROR;</span><br><span class="line">	&#125;</span><br><span class="line">	DEBUG(<span class="string">&quot;RREQ target=%s src=%s dst=%s laddrs=%d\n&quot;</span>,</span><br><span class="line">	      print_ip(trg), print_ip(dp-&gt;src),</span><br><span class="line">	      print_ip(dp-&gt;dst), DSR_RREQ_ADDRS_LEN(rreq_opt));</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Add reversed source route */</span></span><br><span class="line">	srt_rev = dsr_srt_new_rev(dp-&gt;srt);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!srt_rev) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not reverse source route\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_ERROR;</span><br><span class="line">	&#125;</span><br><span class="line">	DEBUG(<span class="string">&quot;srt: %s\n&quot;</span>, print_srt(dp-&gt;srt));</span><br><span class="line">	DEBUG(<span class="string">&quot;srt_rev: %s\n&quot;</span>, print_srt(srt_rev));</span><br><span class="line"></span><br><span class="line">	dsr_rtc_add(srt_rev, ConfValToUsecs(RouteCacheTimeout), <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Set previous hop */</span></span><br><span class="line">	<span class="keyword">if</span> (srt_rev-&gt;laddrs &gt; <span class="number">0</span>)</span><br><span class="line">		dp-&gt;prv_hop = srt_rev-&gt;addrs[<span class="number">0</span>];</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		dp-&gt;prv_hop = srt_rev-&gt;dst;</span><br><span class="line"></span><br><span class="line">	neigh_tbl_add(dp-&gt;prv_hop, dp-&gt;mac.ethh);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Send buffered packets */</span></span><br><span class="line">	send_buf_set_verdict(SEND_BUF_SEND, srt_rev-&gt;dst);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (rreq_opt-&gt;target == myaddr.s_addr) &#123;</span><br><span class="line"></span><br><span class="line">		DEBUG(<span class="string">&quot;RREQ OPT for me - Send RREP\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* According to the draft, the dest addr in the IP header must</span></span><br><span class="line"><span class="comment">		 * be updated with the target address */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">		dp-&gt;nh.iph-&gt;daddr() = (<span class="keyword">nsaddr_t</span>) rreq_opt-&gt;target;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">		dp-&gt;nh.iph-&gt;daddr = rreq_opt-&gt;target;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">		dsr_rrep_send(srt_rev, dp-&gt;srt);</span><br><span class="line"></span><br><span class="line">		action = DSR_PKT_NONE;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125; </span><br><span class="line">	</span><br><span class="line">	n = DSR_RREQ_ADDRS_LEN(rreq_opt) / <span class="keyword">sizeof</span>(struct in_addr);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> (dp-&gt;srt-&gt;src.s_addr == myaddr.s_addr)</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_DROP;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">		<span class="keyword">if</span> (dp-&gt;srt-&gt;addrs[i].s_addr == myaddr.s_addr) &#123;</span><br><span class="line">			action = DSR_PKT_DROP;</span><br><span class="line">			<span class="keyword">goto</span> out;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* <span class="doctag">TODO:</span> Check Blacklist */</span></span><br><span class="line">	srt_rc = lc_srt_find(myaddr, trg);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> (srt_rc) &#123;</span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">dsr_srt</span> *<span class="title">srt_cat</span>;</span></span><br><span class="line">		<span class="comment">/* Send cached route reply */</span></span><br><span class="line">		</span><br><span class="line">		DEBUG(<span class="string">&quot;Send cached RREP\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">		srt_cat = dsr_srt_concatenate(dp-&gt;srt, srt_rc);</span><br><span class="line">		</span><br><span class="line">		FREE(srt_rc);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!srt_cat) &#123;</span><br><span class="line">			DEBUG(<span class="string">&quot;Could not concatenate\n&quot;</span>);</span><br><span class="line">			<span class="keyword">goto</span> rreq_forward;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		DEBUG(<span class="string">&quot;srt_cat: %s\n&quot;</span>, print_srt(srt_cat));</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">if</span> (dsr_srt_check_duplicate(srt_cat) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			DEBUG(<span class="string">&quot;Duplicate address in source route!!!\n&quot;</span>);</span><br><span class="line">			FREE(srt_cat);</span><br><span class="line">			<span class="keyword">goto</span> rreq_forward;				</span><br><span class="line">		&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> NS2</span></span><br><span class="line">		dp-&gt;nh.iph-&gt;daddr() = (<span class="keyword">nsaddr_t</span>) rreq_opt-&gt;target;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">		dp-&gt;nh.iph-&gt;daddr = rreq_opt-&gt;target;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">		DEBUG(<span class="string">&quot;Sending cached RREP to %s\n&quot;</span>, print_ip(dp-&gt;src));</span><br><span class="line">		dsr_rrep_send(srt_rev, srt_cat);</span><br><span class="line">		</span><br><span class="line">		action = DSR_PKT_NONE;	</span><br><span class="line">		</span><br><span class="line">		FREE(srt_cat);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">	rreq_forward:	</span><br><span class="line">		dsr_pkt_alloc_opts_expand(dp, <span class="keyword">sizeof</span>(struct in_addr));</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!DSR_LAST_OPT(dp, rreq_opt)) &#123;</span><br><span class="line">			<span class="keyword">char</span> *to, *from;</span><br><span class="line">			to = (<span class="keyword">char</span> *)rreq_opt + rreq_opt-&gt;length + <span class="number">2</span> +</span><br><span class="line">			    <span class="keyword">sizeof</span>(struct in_addr);</span><br><span class="line">			from = (<span class="keyword">char</span> *)rreq_opt + rreq_opt-&gt;length + <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">			memmove(to, from, <span class="keyword">sizeof</span>(struct in_addr));</span><br><span class="line">		&#125;</span><br><span class="line">		rreq_opt-&gt;addrs[n] = myaddr.s_addr;</span><br><span class="line">		rreq_opt-&gt;length += <span class="keyword">sizeof</span>(struct in_addr);</span><br><span class="line"></span><br><span class="line">		dp-&gt;dh.opth-&gt;p_len = htons(ntohs(dp-&gt;dh.opth-&gt;p_len) +</span><br><span class="line">					   <span class="keyword">sizeof</span>(struct in_addr));</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __KERNEL__</span></span><br><span class="line">		dsr_build_ip(dp, dp-&gt;src, dp-&gt;dst, IP_HDR_LEN,</span><br><span class="line">			     ntohs(dp-&gt;nh.iph-&gt;tot_len) +</span><br><span class="line">			     <span class="keyword">sizeof</span>(struct in_addr), IPPROTO_DSR,</span><br><span class="line">			     dp-&gt;nh.iph-&gt;ttl);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">		<span class="comment">/* Forward RREQ */</span></span><br><span class="line">		action = DSR_PKT_FORWARD_RREQ;</span><br><span class="line">	&#125;</span><br><span class="line">      out:</span><br><span class="line">	FREE(srt_rev);</span><br><span class="line">	<span class="keyword">return</span> action;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第25-28行，判断该路由请求是否已经存在于缓存中，若存在，则丢弃该包；若不存在，则在路由请求表里面添加这个请求</li>
+<li>第44行，根据该数据包的源路由建立逆向源路由，以便发送路由回复</li>
+<li>第66-81行，如果路由请求的目的地址与该节点自身地址一致，就发送路由回复，选项为路由回复选项</li>
+<li>第95行，如果路由请求的目的地址与自身地址不同，则在该节点的路由缓冲中搜索是否有到目的节点的路由</li>
+<li>第125行，发送路由回复请求</li>
+<li>第133-153行，如果没有发现，就为DSR选项分配更多的内存，然后将自身的IP地址添加到路由请求选项中，更新IP首部信息</li>
+<li>第155行，进行转发</li>
+</ul>
+<h2 id="路由维护-1"><a href="#路由维护-1" class="headerlink" title="路由维护"></a>路由维护</h2><h3 id="处理确认请求选项"><a href="#处理确认请求选项" class="headerlink" title="处理确认请求选项"></a>处理确认请求选项</h3><p>&emsp;&emsp;确认请求(ACK Request)选项，DSR使用确认请求选项来判断邻居节点是否存活。当给一个邻居节点重发多次ACK请求却仍然没有收到回复的话，该节点就会认为其到邻居节点的链路已经被破坏，从而从路由缓存中删除这条路由，并且给上一次收到ACK之后在这条链路上发送过数据包的节点发送路由错误<br>&emsp;&emsp;<code>dsr-ack.c</code>实现了对接收到的带确认请求选项的数据包回复ACK的功能。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> NSCLASS <span class="title">dsr_ack_req_opt_recv</span><span class="params">(struct dsr_pkt *dp, struct dsr_ack_req_opt *ack_req_opt)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">short</span> id;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!ack_req_opt || !dp || dp-&gt;flags &amp; PKT_PROMISC_RECV)</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_ERROR;</span><br><span class="line"></span><br><span class="line">	dp-&gt;ack_req_opt = ack_req_opt;</span><br><span class="line"></span><br><span class="line">	id = ntohs(ack_req_opt-&gt;id);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;srt_opt)</span><br><span class="line">		dp-&gt;prv_hop = dp-&gt;src;</span><br><span class="line"></span><br><span class="line">	DEBUG(<span class="string">&quot;src=%s prv=%s id=%u\n&quot;</span>,</span><br><span class="line">	      print_ip(dp-&gt;src), print_ip(dp-&gt;prv_hop), id);</span><br><span class="line"></span><br><span class="line">	dsr_ack_send(dp-&gt;prv_hop, id);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> DSR_PKT_NONE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="处理确认选项"><a href="#处理确认选项" class="headerlink" title="处理确认选项"></a>处理确认选项</h3><p>&emsp;&emsp;当数据包顺利送达目标节点之后，就会产生一个确认（ACK）选项，而源节点收到这个选项后，就从维护缓存中删除发送给ACK源端的数据包。<br>&emsp;&emsp;在<code>dsr-ack.c</code>中实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> NSCLASS <span class="title">dsr_ack_opt_recv</span><span class="params">(struct dsr_ack_opt *ack)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">short</span> id;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">dst</span>, <span class="title">src</span>, <span class="title">myaddr</span>;</span></span><br><span class="line">	<span class="keyword">int</span> n;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!ack)</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_ERROR;</span><br><span class="line"></span><br><span class="line">	myaddr = my_addr();</span><br><span class="line"></span><br><span class="line">	dst.s_addr = ack-&gt;dst;</span><br><span class="line">	src.s_addr = ack-&gt;src;</span><br><span class="line">	id = ntohs(ack-&gt;id);</span><br><span class="line"></span><br><span class="line">	DEBUG(<span class="string">&quot;ACK dst=%s src=%s id=%u\n&quot;</span>, print_ip(dst), print_ip(src), id);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (dst.s_addr != myaddr.s_addr)</span><br><span class="line">		<span class="keyword">return</span> DSR_PKT_ERROR;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Purge packets buffered for this next hop */</span></span><br><span class="line">	n = maint_buf_del_all_id(src, id);</span><br><span class="line"></span><br><span class="line">	DEBUG(<span class="string">&quot;Removed %d packets from maint buf\n&quot;</span>, n);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> DSR_PKT_NONE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成路由错误选项"><a href="#生成路由错误选项" class="headerlink" title="生成路由错误选项"></a>生成路由错误选项</h3><p>&emsp;&amp;emsp当发生路由错误时，比如网络拓扑结构发生变化，数据包无法送达，节点需要生成并发送错误通知给数据包的源节点。<br>&emsp;&amp;emsp在<code>dsr-rerr.c</code>中得以实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> NSCLASS <span class="title">dsr_rerr_send</span><span class="params">(struct dsr_pkt *dp_trigg, struct in_addr unr_addr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_pkt</span> *<span class="title">dp</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dsr_rerr_opt</span> *<span class="title">rerr_opt</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">dst</span>, <span class="title">err_src</span>, <span class="title">err_dst</span>, <span class="title">myaddr</span>;</span></span><br><span class="line">	<span class="keyword">char</span> *buf;</span><br><span class="line">	<span class="keyword">int</span> n, len, i;</span><br><span class="line"></span><br><span class="line">	myaddr = my_addr();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp_trigg || dp_trigg-&gt;src.s_addr == myaddr.s_addr)</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp_trigg-&gt;srt_opt) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not find source route option\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (dp_trigg-&gt;srt_opt-&gt;salv == <span class="number">0</span>)</span><br><span class="line">		dst = dp_trigg-&gt;src;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		dst.s_addr = dp_trigg-&gt;srt_opt-&gt;addrs[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">	dp = dsr_pkt_alloc(<span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not allocate DSR packet\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	dp-&gt;srt = dsr_rtc_find(myaddr, dst);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;srt) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;No source route to %s\n&quot;</span>, print_ip(dst));</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	len = DSR_OPT_HDR_LEN + DSR_SRT_OPT_LEN(dp-&gt;srt) + </span><br><span class="line">		(DSR_RERR_HDR_LEN + <span class="number">4</span>) + </span><br><span class="line">		DSR_ACK_HDR_LEN * dp_trigg-&gt;num_ack_opts;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">/* Also count in RERR opts in trigger packet */</span></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; dp_trigg-&gt;num_rerr_opts; i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (dp_trigg-&gt;rerr_opt[i]-&gt;salv &gt; ConfVal(MAX_SALVAGE_COUNT))</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">		len += (dp_trigg-&gt;rerr_opt[i]-&gt;length + <span class="number">2</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	DEBUG(<span class="string">&quot;opt_len=%d SR: %s\n&quot;</span>, len, print_srt(dp-&gt;srt));</span><br><span class="line">	n = dp-&gt;srt-&gt;laddrs / <span class="keyword">sizeof</span>(struct in_addr);</span><br><span class="line">	dp-&gt;src = myaddr;</span><br><span class="line">	dp-&gt;dst = dst;</span><br><span class="line">	dp-&gt;nxt_hop = dsr_srt_next_hop(dp-&gt;srt, n);</span><br><span class="line"></span><br><span class="line">	dp-&gt;nh.iph = dsr_build_ip(dp, dp-&gt;src, dp-&gt;dst, IP_HDR_LEN,</span><br><span class="line">				  IP_HDR_LEN + len, IPPROTO_DSR, IPDEFTTL);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;nh.iph) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not create IP header\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	buf = dsr_pkt_alloc_opts(dp, len);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!buf)</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line"></span><br><span class="line">	dp-&gt;dh.opth = dsr_opt_hdr_add(buf, len, DSR_NO_NEXT_HDR_TYPE);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;dh.opth) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not create DSR options header\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	buf += DSR_OPT_HDR_LEN;</span><br><span class="line">	len -= DSR_OPT_HDR_LEN;</span><br><span class="line"></span><br><span class="line">	dp-&gt;srt_opt = dsr_srt_opt_add(buf, len, <span class="number">0</span>, <span class="number">0</span>, dp-&gt;srt);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!dp-&gt;srt_opt) &#123;</span><br><span class="line">		DEBUG(<span class="string">&quot;Could not create Source Route option header\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	buf += DSR_SRT_OPT_LEN(dp-&gt;srt);</span><br><span class="line">	len -= DSR_SRT_OPT_LEN(dp-&gt;srt);</span><br><span class="line"></span><br><span class="line">	rerr_opt = dsr_rerr_opt_add(buf, len, NODE_UNREACHABLE, dp-&gt;src, </span><br><span class="line">				    dp-&gt;dst, unr_addr, </span><br><span class="line">				    dp_trigg-&gt;srt_opt-&gt;salv);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!rerr_opt)</span><br><span class="line">		<span class="keyword">goto</span> out_err;</span><br><span class="line"></span><br><span class="line">	buf += (rerr_opt-&gt;length + <span class="number">2</span>);</span><br><span class="line">	len -= (rerr_opt-&gt;length + <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Add old RERR options */</span></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; dp_trigg-&gt;num_rerr_opts; i++) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (dp_trigg-&gt;rerr_opt[i]-&gt;salv &gt; ConfVal(MAX_SALVAGE_COUNT))</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">		<span class="built_in">memcpy</span>(buf, dp_trigg-&gt;rerr_opt[i], </span><br><span class="line">		       dp_trigg-&gt;rerr_opt[i]-&gt;length + <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">		len -= (dp_trigg-&gt;rerr_opt[i]-&gt;length + <span class="number">2</span>);</span><br><span class="line">		buf += (dp_trigg-&gt;rerr_opt[i]-&gt;length + <span class="number">2</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* <span class="doctag">TODO:</span> Must preserve order of RERR and ACK options from triggering</span></span><br><span class="line"><span class="comment">	 * packet */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Add old ACK options */</span></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; dp_trigg-&gt;num_ack_opts; i++) &#123;</span><br><span class="line">		<span class="built_in">memcpy</span>(buf, dp_trigg-&gt;ack_opt[i], </span><br><span class="line">		       dp_trigg-&gt;ack_opt[i]-&gt;length + <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">		len -= (dp_trigg-&gt;ack_opt[i]-&gt;length + <span class="number">2</span>);</span><br><span class="line">		buf += (dp_trigg-&gt;ack_opt[i]-&gt;length + <span class="number">2</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err_src.s_addr = rerr_opt-&gt;err_src;</span><br><span class="line">	err_dst.s_addr = rerr_opt-&gt;err_dst;</span><br><span class="line"></span><br><span class="line">	DEBUG(<span class="string">&quot;Send RERR err_src %s err_dst %s unr_dst %s\n&quot;</span>,</span><br><span class="line">	      print_ip(err_src),</span><br><span class="line">	      print_ip(err_dst), </span><br><span class="line">	      print_ip(*((struct in_addr *)rerr_opt-&gt;info)));</span><br><span class="line"></span><br><span class="line">	XMIT(dp);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"> out_err:</span><br><span class="line"></span><br><span class="line">	dsr_pkt_free(dp);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第24行，申请一个DSR数据包</li>
+<li>第31行，建立一条到达数据包源端的路由，以便发送错误</li>
+<li>第89-91行，添加路由错误的选项</li>
+<li>第132行，调用<code>XMIT()</code>函数，发送数据包</li>
+</ul>
+<h3 id="处理路由错误选项"><a href="#处理路由错误选项" class="headerlink" title="处理路由错误选项"></a>处理路由错误选项</h3><p>&emsp;&amp;emsp在<code>dsr-rerr.c</code>中实现了处理路由错误选项的功能：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> NSCLASS <span class="title">dsr_rerr_opt_recv</span><span class="params">(struct dsr_pkt *dp, struct dsr_rerr_opt *rerr_opt)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">err_src</span>, <span class="title">err_dst</span>, <span class="title">unr_addr</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!rerr_opt)</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	</span><br><span class="line">	dp-&gt;rerr_opt[dp-&gt;num_rerr_opts++] = rerr_opt;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">switch</span> (rerr_opt-&gt;err_type) &#123;</span><br><span class="line">	<span class="keyword">case</span> NODE_UNREACHABLE:</span><br><span class="line">		err_src.s_addr = rerr_opt-&gt;err_src;</span><br><span class="line">		err_dst.s_addr = rerr_opt-&gt;err_dst;</span><br><span class="line"></span><br><span class="line">		<span class="built_in">memcpy</span>(&amp;unr_addr, rerr_opt-&gt;info, <span class="keyword">sizeof</span>(struct in_addr));</span><br><span class="line"></span><br><span class="line">		DEBUG(<span class="string">&quot;NODE_UNREACHABLE err_src=%s err_dst=%s unr=%s\n&quot;</span>,</span><br><span class="line">		      print_ip(err_src), print_ip(err_dst), print_ip(unr_addr));</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* For now we drop all unacked packets... should probably</span></span><br><span class="line"><span class="comment">		 * salvage */</span></span><br><span class="line">		maint_buf_del_all(err_dst);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Remove broken link from cache */</span></span><br><span class="line">		lc_link_del(err_src, unr_addr);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* <span class="doctag">TODO:</span> Check options following the RERR option */</span></span><br><span class="line"><span class="comment">/* 		dsr_rtc_del(my_addr(), err_dst); */</span></span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> FLOW_STATE_NOT_SUPPORTED:</span><br><span class="line">		DEBUG(<span class="string">&quot;FLOW_STATE_NOT_SUPPORTED\n&quot;</span>);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> OPTION_NOT_SUPPORTED:</span><br><span class="line">		DEBUG(<span class="string">&quot;OPTION_NOT_SUPPORTED\n&quot;</span>);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第11-29行，若收到“节点不可达”的错误，则节点会在自己的路由缓存中删除这条路由</li>
+<li>第30-35行，其他类型的错误，会输出错误的类型</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    月如霜
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2019/03/19/%E5%8A%A8%E6%80%81%E6%BA%90%E8%B7%AF%E7%94%B1(DSR)%E5%8D%8F%E8%AE%AE%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/" title="动态源路由(DSR)协议代码分析">http://yoursite.com/2019/03/19/%E5%8A%A8%E6%80%81%E6%BA%90%E8%B7%AF%E7%94%B1(DSR)%E5%8D%8F%E8%AE%AE%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" rel="tag"># 源码分析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/18/%E9%92%88%E5%AF%B9%E6%99%BA%E8%83%BD%E7%94%B5%E7%BD%91%E5%86%85%E9%83%A8%E6%94%BB%E5%87%BB%E7%9A%84%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E6%95%B0%E6%8D%AE%E8%81%9A%E5%90%88%E6%96%B9%E6%A1%88/" rel="next" title="针对智能电网内部攻击的隐私保护数据聚合方案">
+                <i class="fa fa-chevron-left"></i> 针对智能电网内部攻击的隐私保护数据聚合方案
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/Bronya.jpg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/XueiuR" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://cy2cs.top/" title="cy2cs" target="_blank">cy2cs</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.yourhome.ren/" title="yunsle" target="_blank">yunsle</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DSR%E5%8D%8F%E8%AE%AE%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">DSR协议简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DSR%E5%8D%8F%E8%AE%AE%E7%BB%84%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text">DSR协议组成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%8F%91%E7%8E%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">路由发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E7%BB%B4%E6%8A%A4"><span class="nav-number">1.2.2.</span> <span class="nav-text">路由维护</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DSR%E9%80%89%E9%A1%B9%E5%A4%B4"><span class="nav-number">2.1.</span> <span class="nav-text">DSR选项头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DSR%E8%B7%AF%E7%94%B1%E8%AF%B7%E6%B1%82%E9%80%89%E9%A1%B9"><span class="nav-number">2.2.</span> <span class="nav-text">DSR路由请求选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DSR%E8%B7%AF%E7%94%B1%E5%9B%9E%E5%A4%8D%E9%80%89%E9%A1%B9"><span class="nav-number">2.3.</span> <span class="nav-text">DSR路由回复选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DSR%E8%B7%AF%E7%94%B1%E9%94%99%E8%AF%AF%E9%80%89%E9%A1%B9"><span class="nav-number">2.4.</span> <span class="nav-text">DSR路由错误选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DSR%E8%B7%AF%E7%94%B1%E7%BB%B4%E6%8A%A4%E9%80%89%E9%A1%B9"><span class="nav-number">2.5.</span> <span class="nav-text">DSR路由维护选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DSR%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-number">2.6.</span> <span class="nav-text">DSR数据包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E8%B7%AF%E7%94%B1%E7%BB%93%E6%9E%84"><span class="nav-number">2.7.</span> <span class="nav-text">源路由结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E8%AF%B7%E6%B1%82%E8%A1%A8"><span class="nav-number">2.8.</span> <span class="nav-text">路由请求表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">函数分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">3.1.</span> <span class="nav-text">流程图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%8F%91%E7%8E%B0-1"><span class="nav-number">3.2.</span> <span class="nav-text">路由发现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-number">3.2.1.</span> <span class="nav-text">生成数据包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BADSR%E9%80%89%E9%A1%B9%E9%A6%96%E9%83%A8%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98"><span class="nav-number">3.2.2.</span> <span class="nav-text">为DSR选项首部分配内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DSR%E5%8D%8F%E8%AE%AE%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-number">3.2.3.</span> <span class="nav-text">DSR协议处理数据包</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">接收数据包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-number">3.2.3.2.</span> <span class="nav-text">发送数据包</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DSR%E5%A4%84%E7%90%86%E6%BA%90%E8%B7%AF%E7%94%B1%E8%AF%B7%E6%B1%82"><span class="nav-number">3.2.4.</span> <span class="nav-text">DSR处理源路由请求</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%BA%90%E8%B7%AF%E7%94%B1%E9%80%89%E9%A1%B9"><span class="nav-number">3.2.4.1.</span> <span class="nav-text">添加源路由选项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E7%BC%A9%E5%87%8F"><span class="nav-number">3.2.4.2.</span> <span class="nav-text">路由缩减</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E8%B7%AF%E7%94%B1%E8%AF%B7%E6%B1%82"><span class="nav-number">3.2.5.</span> <span class="nav-text">生成路由请求</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%8F%91%E7%8E%B0%E8%AF%B7%E6%B1%82"><span class="nav-number">3.2.5.1.</span> <span class="nav-text">路由发现请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%B7%AF%E7%94%B1%E8%AF%B7%E6%B1%82%E8%A1%A8"><span class="nav-number">3.2.5.2.</span> <span class="nav-text">查询路由请求表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E8%B7%AF%E7%94%B1%E8%AF%B7%E6%B1%82%E8%A1%A8%E9%A1%B9"><span class="nav-number">3.2.5.3.</span> <span class="nav-text">添加路由请求表项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E8%B7%AF%E7%94%B1%E8%AF%B7%E6%B1%82"><span class="nav-number">3.2.5.4.</span> <span class="nav-text">发送路由请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E8%B7%AF%E7%94%B1%E8%AF%B7%E6%B1%82%E9%80%89%E9%A1%B9"><span class="nav-number">3.2.5.5.</span> <span class="nav-text">添加路由请求选项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E8%B7%AF%E7%94%B1%E8%AF%B7%E6%B1%82-1"><span class="nav-number">3.2.5.6.</span> <span class="nav-text">发送路由请求</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E6%95%B0%E6%8D%AE%E5%8C%85-1"><span class="nav-number">3.2.6.</span> <span class="nav-text">发送数据包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E8%B7%AF%E7%94%B1%E8%AF%B7%E6%B1%82"><span class="nav-number">3.2.7.</span> <span class="nav-text">接收路由请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E7%BB%B4%E6%8A%A4-1"><span class="nav-number">3.3.</span> <span class="nav-text">路由维护</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E7%A1%AE%E8%AE%A4%E8%AF%B7%E6%B1%82%E9%80%89%E9%A1%B9"><span class="nav-number">3.3.1.</span> <span class="nav-text">处理确认请求选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E7%A1%AE%E8%AE%A4%E9%80%89%E9%A1%B9"><span class="nav-number">3.3.2.</span> <span class="nav-text">处理确认选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E8%B7%AF%E7%94%B1%E9%94%99%E8%AF%AF%E9%80%89%E9%A1%B9"><span class="nav-number">3.3.3.</span> <span class="nav-text">生成路由错误选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E8%B7%AF%E7%94%B1%E9%94%99%E8%AF%AF%E9%80%89%E9%A1%B9"><span class="nav-number">3.3.4.</span> <span class="nav-text">处理路由错误选项</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">月如霜</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>

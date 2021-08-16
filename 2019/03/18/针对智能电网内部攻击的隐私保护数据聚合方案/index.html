@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="论文学习," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Efficient and Privacy-Preserving Data Aggregation Scheme for Smart Grid Against Internal Adversaries   针对智能电网内部攻击的隐私保护数据聚合方案   [论文原文]Efficient and Privacy-Preserving Data Aggregation Scheme for Smart">
+<meta property="og:type" content="article">
+<meta property="og:title" content="针对智能电网内部攻击的隐私保护数据聚合方案">
+<meta property="og:url" content="http://yoursite.com/2019/03/18/%E9%92%88%E5%AF%B9%E6%99%BA%E8%83%BD%E7%94%B5%E7%BD%91%E5%86%85%E9%83%A8%E6%94%BB%E5%87%BB%E7%9A%84%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E6%95%B0%E6%8D%AE%E8%81%9A%E5%90%88%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:site_name" content="月如霜的博客">
+<meta property="og:description" content="Efficient and Privacy-Preserving Data Aggregation Scheme for Smart Grid Against Internal Adversaries   针对智能电网内部攻击的隐私保护数据聚合方案   [论文原文]Efficient and Privacy-Preserving Data Aggregation Scheme for Smart">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-03-18T03:09:24.000Z">
+<meta property="article:modified_time" content="2019-03-18T15:44:02.000Z">
+<meta property="article:author" content="月如霜">
+<meta property="article:tag" content="论文学习">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/18/针对智能电网内部攻击的隐私保护数据聚合方案/"/>
+
+
+
+
+
+  <title>针对智能电网内部攻击的隐私保护数据聚合方案 | 月如霜的博客</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">月如霜的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/18/%E9%92%88%E5%AF%B9%E6%99%BA%E8%83%BD%E7%94%B5%E7%BD%91%E5%86%85%E9%83%A8%E6%94%BB%E5%87%BB%E7%9A%84%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E6%95%B0%E6%8D%AE%E8%81%9A%E5%90%88%E6%96%B9%E6%A1%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/Bronya.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="月如霜的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">针对智能电网内部攻击的隐私保护数据聚合方案</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-18T11:09:24+08:00">
+                2019-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <center><font size ="4">Efficient and Privacy-Preserving Data Aggregation Scheme for Smart Grid Against Internal Adversaries </font> </center>
+<center><font size ="3">针对智能电网内部攻击的隐私保护数据聚合方案</font> </center>
+
+<p><a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/7959204">[论文原文]Efficient and Privacy-Preserving Data Aggregation Scheme for Smart Grid Against Internal Adversaries</a></p>
+<h1 id="内容概述"><a href="#内容概述" class="headerlink" title="内容概述"></a>内容概述</h1><p>&emsp;&emsp;对于题目“针对智能电网内部攻击的隐私保护数据集合方案”，可以看出，该方案应用于智能电网中，而在电网系统内部，主要包括电表$SM_i$的汇集器$Agg$，本方案主要在这两者之上做文章。对于电表$SM_i$，我们可以进行注册认证，如果未经过注册，我们不承认其合法地位；对于$Agg$，我们通过对密文$c_i$进行构造，比如进行盲化操作，使其无法得到每一个电表单独发送的密文$c_i$，而可以通过对$c_i$求和，获得$c=\sum_{i=1}^n c_i$，进而通过一些解法求出明文$m=\sum_{i=1}^n m_i$。<br>&emsp;&emsp;近年来，智能电网技术在电网进行电力数据交换、电费计算、电力分配方面扮演着极为重要的角色。为此美国国家标准技术研究院对此提出了智能电网网络模型，该模型主要包括七个区域，具体名称及作用如下：</p>
+<ul>
+<li>电力生成域：负责使用可再生和不可再生资源发电  </li>
+<li>传输域：负责向配电域传输电力  </li>
+<li>配电域：负责根据用户的需求分配电力  </li>
+<li>消费域：负责储存电力并管理其使用  </li>
+<li>控制域：负责控制电网中的电流  </li>
+<li>交易域：负责控制电网中的电力交易  </li>
+<li>服务提供商域：负责处理来自第三方的操作  </li>
+</ul>
+<p>&emsp;&emsp;在本论文中，我们只是进行安全方面的论述，故可以将其抽象为三个区域，分别是可信第三方$TTP$，聚合器$Agg$和智能电表$SM_i$。具体内容在之后介绍。<br>&emsp;&emsp;智能电网相比于传统电网，可以更频繁地统计用户信息。那么，实时用电数据传输的频率越高，就越准确地反映了每一段时间内消费者的用电情况，相当于暴露了用户的生活习惯；另一方面，敌手可以修改消息$m_i$篡改电费来达到“偷电”的目的，这也是不被允许的。综上所述，我们的智能电网方案需要满足传输数据的保密性和完整性的需求。<br>&emsp;&emsp;针对以上问题，多年来已经有许多种安全方案被用来满足相关需求，其中最好的一种便是$P2DA$方案（隐私保护数据聚合方案）。它不但可以保护用户隐私，也可以通过消息认证码和数字签名来保护数据的完整性。在前人的基础上，本论文针对内部敌人及效率方面做出改进，提出了一种新的$P2DA$方案。正如论文中作者所言，本篇论文的贡献如下：<br>&emsp; 1. 提出一种基于$BGN$同态加密算法的高效$P2DA$模式<br>&emsp; 2. 本文提出的$P2DA$模式是可证明安全的，并且可以满足现有安全需要<br>&emsp; 3. 本文提出的$P2DA$模式是一种高计算效率的模式  </p>
+<h1 id="论文详述"><a href="#论文详述" class="headerlink" title="论文详述"></a>论文详述</h1><p>&emsp;&emsp;在介绍本论文之前，我们先了解一下系统模型。</p>
+<h2 id="系统模型介绍"><a href="#系统模型介绍" class="headerlink" title="系统模型介绍"></a>系统模型介绍</h2><p>&emsp;&emsp;正如前文所述，我们的模型分为三大类：一个可信第三方($TTP$)，一个聚合器($Agg$)，多个智能电表($SM_i$)，它们在本系统中的功能如下：</p>
+<ul>
+<li><p>$TTP$：一个可信第三方，为$Agg$和$SM_i$生成盲因子</p>
+</li>
+<li><p>$Agg$：智能电表的管理者，生成系统参数，并管理$SM_i$的公开信息</p>
+</li>
+<li><p>$SM_i$：合法的智能电表，收集实时电力消费数据，并将其发送给$Agg$</p>
+</li>
+</ul>
+<p>&emsp;&emsp;在了解了系统模型以后，我们看一下本论文中使用相关算法和技术。</p>
+<h2 id="相关算法及技术"><a href="#相关算法及技术" class="headerlink" title="相关算法及技术"></a>相关算法及技术</h2><h3 id="BGN-加密技术"><a href="#BGN-加密技术" class="headerlink" title="$BGN$加密技术"></a>$BGN$加密技术</h3><p>&emsp;&emsp;该算法由三个子算法组成，分别为密钥生成算法，加密算法和解密算法。  </p>
+<ul>
+<li>密钥生成算法：</li>
+</ul>
+<p>&emsp;&emsp;该算法由用户执行，生成他/她的公钥和私钥  </p>
+<ol>
+<li>用户随机选取四个素数$p_1,q_1,p,q$ ,它们满足如下关系：  $p_1 = 2\cdot p + 1$ , $ q_1 = 2 \cdot q + 1$     </li>
+<li>用户$n = p_1 \cdot q_1 $,$ \lambda = p \cdot q$，选择一个生成元$g\in Z_n^*$，阶数为$\lambda$，计算 $\eta = g^q \bmod n$  </li>
+<li>用户发布其公钥$puk=(n,g,\eta)$，保存私钥$prk=(p,q)$</li>
+</ol>
+<ul>
+<li> 加密算法：</li>
+</ul>
+<p>&emsp;&emsp;该算法由发送者执行，生成明文$m$的对应密文$c$  </p>
+<ol>
+<li>发送者随机选择$r \in Z_n^*$  </li>
+<li>发送者计算密文$c = g^{m_i} \cdot \eta ^{r_i} \bmod n$  </li>
+<li>发送者输出密文$c$</li>
+</ol>
+<ul>
+<li>解密算法：</li>
+</ul>
+<p>&emsp;&emsp;该算法由用户执行，解密密文$c$，获取消息$m$  </p>
+<ol>
+<li>用户计算$c^p \bmod n = {(g^m \cdot \eta ^{r})}^p = {(g^p)}^m \bmod n$  </li>
+<li>用户使用波拉德的$\lambda$算法，解决离散对数问题，输出消息$m$</li>
+</ol>
+<h3 id="波拉德的-lambda-算法"><a href="#波拉德的-lambda-算法" class="headerlink" title="波拉德的$\lambda$算法"></a>波拉德的$\lambda$算法</h3><p>&emsp;&emsp;波拉德的$\lambda$算法，也称为波拉德的袋鼠算法，可以用来解决离散对数问题。<br>&emsp;&emsp;它的思想就是类比于两只袋鼠，他们在各自的解空间内进行跳跃，一只为驯化的袋鼠，一只为野生的袋鼠。驯化的袋鼠每跳跃一次，就在地上留下一个陷阱；野生的袋鼠也在向前跳跃，如果某一刻野生袋鼠正好跳入到陷阱中，我们就认为二者在参数上存在关系，即可求解。<br>&emsp;&emsp;又因为从路线形状上看，两只袋鼠的跳跃轨迹类似于“$\lambda$”,故又称为波拉德的$\lambda$算法。<br>&emsp;&emsp;具体方法如下：$G$是有序循环群，生成元为$\alpha$，阶数为$n$，我们求解$\alpha ^x = \beta$，其中$x \in Z_n$，算法允许我们在$\left{a,…,b \right} \in Z_n$中来搜索，故先令$a = 0$,$b = n - 1$,求解：  </p>
+<ol>
+<li>选择一组整数$S$，定义映射$f:G \leftarrow S$</li>
+<li>选择一个整数$N$，计算$\left{x_0,x_1,…,x_n \right}$，其中：$x_0 = \alpha ^b$，$x_{i+1} = x_i \cdot \alpha ^{f(x_i)}$<br>计算：$d=\sum_{i=0}^{N-1} f(x_i)$，观察有$x_N = x_0 \cdot \alpha ^{d}= \alpha^{b+d}$<br>在这里，$x_0$是驯化袋鼠跳跃的起点位置，$x_{i+1}$是驯化袋鼠第$i+1$次跳跃的位置，$d$是驯化袋鼠跳跃的总距离，$x_N$是袋鼠跳跃的当前位置  </li>
+<li>计算$\left{y_0,y_1,…,y_n\right}$，其中：$y_0=\alpha^x = \beta$,$y_{i+1}=y_i\cdot \alpha ^{f(y_i)}$,$i = 0,1,…,N-1$<br>计算：$d_n = \sum_{i=0}^{n-1}f(y_i)$，观察有：$y_i=y_0 \cdot \alpha ^{d_i} = \beta \cdot \alpha ^{d_i} $<br>这里是计算野生袋鼠的参数，符号表示与2类似</li>
+<li>当满足如下条件之一时停止计算：</li>
+</ol>
+<ul>
+<li>若$x_N=y_i$,<br>则由$x_N = y_i \Rightarrow \alpha ^{b+d} = \beta \cdot \alpha^{d_i} \Rightarrow x = b+d-d_i \bmod n$</li>
+<li>若$d_i &gt; b-a +d$，<br>则无法找到$x$，可以改变$S$或者$f$重新求解</li>
+</ul>
+<h3 id="Small-Exponent-Test-技术"><a href="#Small-Exponent-Test-技术" class="headerlink" title="$Small Exponent Test$技术"></a>$Small Exponent Test$技术</h3><p>&emsp;&emsp;小指数检测技术，用于优化批量验证过程。<br>&emsp;&emsp;$G$是乘法群，生成元为$g$，阶数为$q$，存在$n$对需要验证的实例$\left{\left{(x_1,y_1),(x_2,y_2),…,(x_n,y_n)\right} \vert x_i \in Z_q,y_i \in G\right}$，我们可以验证$g^{\sum_{i=1}^n {x_i \cdot {s_i}}}=\prod_{i=1}^n y_i^{s_i}$是否成立，来判断所有需要验证的实例是否成立。其中，$E$是预先定义的小数集合， $s_i \in E$是随机选择的。<br>&emsp;&emsp;在$SET$中，$n$个随机化的指数$s_1,…,s_n$以及$n$个指数$x_1,…,x_n$作为输入的数据，可以聚合成单个指数，即 $\sum_{i=1}^n x_i \cdot s_i \bmod q$，用来降低计算开销。<br>&emsp;&emsp;使用$SET$技术保证消息的不可伪造性。</p>
+<h2 id="安全需求"><a href="#安全需求" class="headerlink" title="安全需求"></a>安全需求</h2><p>&emsp;&emsp;如我们在第一部分所述，本次提出的$P2DA$模式应该满足如下几个方面的要求:  </p>
+<ul>
+<li>隐私保护：实时电费可以让攻击者推测出用户生活习惯，所以无论是外部攻击还是内部攻击我们都应该阻止其对电费详情的查阅。  </li>
+<li>认证：为了确保电费来自于合法的电费$SM_i$，$Agg$需要认证$SM_i$的合法性  </li>
+<li>数据完整性：为了确保传输过程中的电费未被修改。$Agg$应该可以能检测出消息的完整性。</li>
+</ul>
+<h2 id="P2DA-模式的具体实现"><a href="#P2DA-模式的具体实现" class="headerlink" title="$P2DA$模式的具体实现"></a>$P2DA$模式的具体实现</h2><p>&emsp;&emsp;在我们提出的$P2DA$模式中，主要分为三个阶段，分别是：初始化阶段，生成相关参数；注册阶段，智能电表$SM_i$在$Agg$处注册，成为合法电表；数据汇集阶段，$SM_i$向$Agg$发送加密后的消息$c_i$，$Agg$汇总所有$SM_i$发送的密文，然后求和。下面，我们看下每个阶段的具体过程。</p>
+<h3 id="初始化阶段"><a href="#初始化阶段" class="headerlink" title="初始化阶段"></a>初始化阶段</h3><p>&emsp;&emsp;本模式基于前文提到的$BGN$加密算法。首先$Agg$生成系统参量，随机选取$6$个素数$p_1,q_1,\hat{p},\hat{q},p,q$，其中 $p_1 = 2\cdot p + 1$ , $ q_1 = 2 \cdot q + 1$,$\hat{p} \vert \hat{q}-1$,然后计算$n_1 = p_1 \cdot q_1$，$\lambda = p \cdot q$,选择$1$个生成元$g \in Z_n^{*}$，阶数为$\lambda$，选择一个生成元$ \xi \in Z_{\hat{p}}^{*} $，阶数为$\hat{q}$，计算$\eta = g^q \bmod n_1$；最后$Agg$公布系统参量$params=(n_1,g,\eta,\hat{p},\hat{q},\xi)$，保存私钥$prk=(p,q)$。在这里面，$params$的前三个参数都基于$BGN$算法使用的，后面的3个参数会在接下来的过程中使用。<br>&emsp;&emsp;与此同时，$TTP$及$Agg$会生成盲因子，具体过程如下：$TTP$随机选择一组大数$\pi_1,\pi_2,…,\pi_n \in Z_n^*$ ，计算$\pi = \sum_{i=1}^n \pi_i$。$TTP$发送$\pi _i$给$SM_i$，同时将$\pi$发送给$Agg$。其中$i=1,2,…,n$是智能电表的标号，$Agg$收到$\pi$后计算$\pi_0 = -\pi \bmod 4pq$。在这里，使用盲化技术，对应之前提到过的需求，使得$Agg$在接收到$c_i$后却无法得到明文$m_i$，至于如何实现去盲化操作，我们在后面会看到。</p>
+<h3 id="注册阶段"><a href="#注册阶段" class="headerlink" title="注册阶段"></a>注册阶段</h3><p>&emsp;&emsp;在注册阶段，$SM_i$随机选择两个大数$x_i,y_i \in Z_{\hat{q}}^*$，计算$X_i= \xi ^{x_i} \bmod \hat{p}$，$Y_i=\xi^{y_i} \bmod \hat{p}$，$\alpha_i = y_i-x_i \cdot h_0(id_i,X_i,Y_i) \bmod\hat{q}$，然后将$\left{id_i,X_i,Y_i,\alpha_i\right}$发送给$Agg$。$Agg$在收到消息后，会检验$Y_i=\xi^{\alpha_i} \cdot X_i^{h_0\left{id_i,X_i,Y_i\right}}$是否成立。如果不成立，$Agg$将终止注册阶段，停止注册；成立的话，将会公开的参数$\left{id_i,X_i,Y_i,\alpha_i\right}$。<br>&emsp;&emsp;在这个过程中，$h_0$是哈希函数，$X_i$和$Y_i$在本阶段及下一个阶段均会使用到，来检验消息是否被篡改。在检验过程中，我们假设$X_i$或$Y_i$被篡改，但$\alpha_i$中存在的$x_i$和$y_i$无法被修改，故可以检验到错误。在注册阶段，我们不但可以使$SM_i$注册成为合法电表，还实现了共享$X_i$和$Y_i$的过程，为下一个阶段做了铺垫。</p>
+<h3 id="数据汇集阶段"><a href="#数据汇集阶段" class="headerlink" title="数据汇集阶段"></a>数据汇集阶段</h3><p>&emsp;&emsp;在本阶段，也就是我们提出的$P2DA$模式最后一个阶段，将会完成传输电费、计算电费总和等任务，下面是具体步骤。<br>&emsp;&emsp;$SM_i$计算电费$m_i$，随机选择两个元素$r_i \in Z_n^{*}$,$k_i \in Z_{\hat{q}}^*$,计算$c_i=g^{m_i} \cdot \eta^{r_i} \cdot h_1(t)^{\pi_i} \bmod n$,$d_i=\xi^{k_i} \bmod \hat{p}$,$\varphi <em>i = h_2(id_i,X_i,c_i,d_i,t)$,$e_i=k_i+\varphi_i+x_i \bmod \hat{q}$, 其中$t$是时间戳。最后$SM_i$发送$\left{c_i,d_i,e_i,t\right}$给$Agg$。在这里，加密使用了之前提到的$BGN$公钥加密技术。唯一不同的是，在计算$c_i$的时候，需要对时间戳$t$作哈希运算，然后配合盲因子，完成盲化过程。对于不同的$SM_i$，肯定是存在不同的$\pi_i$进行盲化。但时间戳$t$应该确保一致：$Agg$计算实时电费，必然是对截止到某一时刻的电费计算总和，这也为后来的去盲化操作作铺垫。<br>&emsp;&emsp;$Agg$计算$\varphi_i = h_2(id_i,X_i,c_i,d_i,t)$,分别验证${\xi}^{e_i}=d_i \cdot X_i^{\varphi_i}$对于每一个${SM_i}$是否成立。我们想一下，在一个真实的电网环境中，存在着成千上万的${SM_i}$，那如果在频繁计算电费的情况下，必然会产生极大的系统开销。为了解决问题，我们用到了在前文提到过的$SET$，进行批量认证；$Agg$随机选择一组很小的数$\theta_1,…,\theta_n \in \left[1,2^s\right]$，其中$s$是一个很小的整数，计算开销非常小，验证$\xi^{\sum</em>{i=1}^n \theta_i \cdot e_i}=\prod_{i=1}^n(d_i^{\theta <em>i} \cdot X_i^{\theta_i \cdot \varphi <em>i})$是否成立。<br>&emsp;&emsp;$Agg$在确认所有的$c_i$未被修改后，就可以计算总电费$c$了，具体步骤将在后面展示，$c={(h_1(t)^{\pi_0}\prod</em>{i=1}^n c_i)}^p=\hat{g}^{\sum</em>{i=1}^n m_i \bmod n}$，此时，我们使用波拉德的袋鼠算法解决离散对数问题，获得总电费$\sum_{i=1}^n m_i$。</p>
+<p>&emsp;&emsp;介绍完了三个阶段，我们可以具体看一下最后一步的推导过程：</p>
+<p>$$c={(h_1(t)^{\pi_0}\prod_{i=1}^n c_i)}^p \qquad \qquad \qquad (1)$$<br>$$=((h_1(t)^\pi_0 \cdot \prod_{i=1}^n(g^{m_i} \cdot \eta^{r_i} \cdot h_1(t)^{\pi_i}))^p\qquad \qquad \qquad (2)$$<br>$$={(h_1(t)^{\sum_{i=0}^n{\pi}<em>i})}^p \cdot (\eta ^{\sum</em>{i=1}^n r_i})^p \cdot(g^{\sum_{i=1}^n m_i})^p\qquad \qquad \qquad (3)$$<br>$$=(h_1(t)^0)^p \cdot ((g^q)^{\sum_{i=1}^n r_i})^p \cdot (g^{\sum_{i=1}^nm_i})^p\qquad \qquad \qquad  (4)$$<br>$$=1 \cdot (g^{p \cdot q})^{\sum_{i=1}^n r_i} \cdot (g^p)^{\sum_{i=1}^n m_i}\qquad \qquad \qquad (5)$$<br>$$=1 \cdot 1 \cdot \hat{g}^{\sum_{i=1}^n m_i}\qquad \qquad \qquad (6)$$<br>即$$c=\hat{g}^{\sum_{i=1}^n m_i} \bmod n\qquad \qquad \qquad (7)$$</p>
+<p>&emsp;&emsp;从(1)到(2)，将$c_i$展开，将基于$BGN$加密算法的加密表达式代入；<br>&emsp;&emsp;从(2)到(3)，主要是对$(h_1(t))$项进行合并，完成去盲化的操作，由于之前提到过$\pi_0=-\pi \bmod 4pq$，$\pi = \sum_{i=1}^n \pi_i$所以，$(h_1(t))$项在相乘的阶段，幂相消为$0$，故$(h_1(t))$项为$1$，完成了去盲化的操作；<br>&emsp;&emsp;从(5)到(6)，令$\hat{g}=g^p$，方便将$g^p$看成一个整体，使用波拉德的袋鼠算法求解，得到电费总和$m=\sum_{i=1}^n m_i$。<br>&emsp;&emsp;到此为止，算法实现部分介绍完毕，下面看一下安全分析。</p>
+<h2 id="安全分析"><a href="#安全分析" class="headerlink" title="安全分析"></a>安全分析</h2><ul>
+<li>在对安全性分析的时候，我们先定义两个游戏，以及挑战者$C$和敌手$A$。在此明确一下，$A$可以完成如下查询函数:</li>
+</ul>
+<ol>
+<li> <code>$h_i(m)$</code>:哈希函数，完成对消息的完整性认证</li>
+<li><code>$CreateSM(id_i)$</code>: $C$生成一个私钥，以及给$ID$为$id_i$的智能电表的盲因子  </li>
+<li><code>$ExtractSM(id_i)$</code>: $C$为$ID$为$id_i$的智能电表的私钥发送给$A$</li>
+<li><code>$Signcrypt(id_i,m_i)$</code>:$C$为$ID$为$id_i$的智能电表生成一个对应于明文消息$m_i$的签密的密文$c_i$</li>
+<li><code>$Unsigncrypt(id_i,m_i)$</code>: $C$提取对应密文$c_i$的消息$m_i$</li>
+</ol>
+<ul>
+<li><p>本文提出的$P2DA$模式对于选择明文攻击是不可区分，因为敌手$A$不能在多项式时间内，以一个不可忽略的优势赢得比赛。<br>具体游戏如下：<br>初始&emsp;&emsp;$C$生成一个系统参数，然后发送给$A$<br>第一阶段&emsp;&emsp;$A$可以使用<code>$CreateSM$</code>,<code>$ExtractSM$</code>,<code>$Signcrypt$</code>三个函数，先进行试探，然后$A$选择一个挑战$id_i$，选择两条相同长度的消息$m_0$，$m_1$,将其发送给$C$<br>挑战阶段&emsp;&emsp;$C$随机选择$b \in \left{0,1\right}$，生成消息$m_b$的对应密文$c_b$，然后将$c_b$发送给$A$<br>最后&emsp;&emsp;$A$输入他的猜测$b’ \in \left{0,1\right}$,$A$的优势即为$Adv_A^{IND-CPA}=|2 \cdot Pr\left[b’=b\right]-1|$<br>在这个游戏中，$A$进行选择消息攻击，故可以在输入$b’$之前，做一些努力，这样的话，他赢的概率就是$Pr\left[b’=b\right]$，如果靠纯猜的话，他赢的概率就是$\frac{1}{2}$，那么$A$的优势就是$Pr\left[b’=b\right]-\frac{1}{2}$，又因为该优势是可以忽略的，为无穷小量，所以优势也可以记作$2 \cdot Pr\left[b’=b\right]-1$。</p>
+</li>
+<li><p>我们提出的$P2DA$模式对于自适应选择消息攻击是不可伪造的，因为敌手$A$不能在多项式时间内，以一个不可忽略的优势赢得比赛。<br>具体游戏如下：<br>初始&emsp;&emsp;$C$生成系统参量，然后发送给$A$<br>查询&emsp;&emsp;$A$可以使用<code>$CreateSM$</code>查询,<code>$ExtractSM$</code>查询,<code>$Signcrypt$</code>查询以及<code>$Unsigncrypt$</code>查询，只是不允许使用带有挑战$id_i$的<code>$ExtractSM$</code>查询<br>伪造&emsp;&emsp;$A$输出一个对应于$id_i$的电表的密文$c_i$</p>
+</li>
+<li><p>当满足下面三种情况的时候，$A$可以赢得这场比赛：</p>
+</li>
+</ul>
+<ol>
+<li>$c_i$是有效的 </li>
+<li>$id_i$和$id_I$是相等的</li>
+<li>$A$没有使用带有$id_I$的<code>$ExtractSM$</code>查询</li>
+</ol>
+<ul>
+<li><p>在本文中，作者使用反证法分别基于$BGN$加密算法的$IND-CPA$来证明提出的$P2DA$模式是$IND-CPA$的，基于离散对数问题难解来证明提出的$P2DA$模式是$AUTH-CMA$的。</p>
+</li>
+<li><p>行文至此，我们可以回顾一下，本模式是否满足了背景中提出的几点安全需求：</p>
+</li>
+</ul>
+<ol>
+<li>隐私性：在密文$c_i$进行加密时，引入了$h_1(t)^{\pi _i}$项，使得无论是外部攻击者还是内部攻击者，均无法单独解密$c_i$</li>
+<li>身份认证：本方案是$AUTH-CMA$的，所以$Agg$可以通过检查接收到的消息的有效性来验证$SM_i$的合法性</li>
+<li>完整性：在上文中，$(d_i,e_i)$是$(c_i,t)$的数字签名，可以用来检查消息$(c_i,t)$是否被修改。</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    月如霜
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2019/03/18/%E9%92%88%E5%AF%B9%E6%99%BA%E8%83%BD%E7%94%B5%E7%BD%91%E5%86%85%E9%83%A8%E6%94%BB%E5%87%BB%E7%9A%84%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E6%95%B0%E6%8D%AE%E8%81%9A%E5%90%88%E6%96%B9%E6%A1%88/" title="针对智能电网内部攻击的隐私保护数据聚合方案">http://yoursite.com/2019/03/18/%E9%92%88%E5%AF%B9%E6%99%BA%E8%83%BD%E7%94%B5%E7%BD%91%E5%86%85%E9%83%A8%E6%94%BB%E5%87%BB%E7%9A%84%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4%E6%95%B0%E6%8D%AE%E8%81%9A%E5%90%88%E6%96%B9%E6%A1%88/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E8%AE%BA%E6%96%87%E5%AD%A6%E4%B9%A0/" rel="tag"># 论文学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/17/Pareto%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="next" title="Pareto基础知识点">
+                <i class="fa fa-chevron-left"></i> Pareto基础知识点
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/19/%E5%8A%A8%E6%80%81%E6%BA%90%E8%B7%AF%E7%94%B1(DSR)%E5%8D%8F%E8%AE%AE%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/" rel="prev" title="动态源路由(DSR)协议代码分析">
+                动态源路由(DSR)协议代码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/Bronya.jpg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/XueiuR" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://cy2cs.top/" title="cy2cs" target="_blank">cy2cs</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.yourhome.ren/" title="yunsle" target="_blank">yunsle</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AE%B9%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">内容概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E8%AF%A6%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">论文详述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9E%8B%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.1.</span> <span class="nav-text">系统模型介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E7%AE%97%E6%B3%95%E5%8F%8A%E6%8A%80%E6%9C%AF"><span class="nav-number">2.2.</span> <span class="nav-text">相关算法及技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BGN-%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AF"><span class="nav-number">2.2.1.</span> <span class="nav-text">$BGN$加密技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A2%E6%8B%89%E5%BE%B7%E7%9A%84-lambda-%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.2.</span> <span class="nav-text">波拉德的$\lambda$算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Small-Exponent-Test-%E6%8A%80%E6%9C%AF"><span class="nav-number">2.2.3.</span> <span class="nav-text">$Small Exponent Test$技术</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E9%9C%80%E6%B1%82"><span class="nav-number">2.3.</span> <span class="nav-text">安全需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#P2DA-%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.4.</span> <span class="nav-text">$P2DA$模式的具体实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%98%B6%E6%AE%B5"><span class="nav-number">2.4.1.</span> <span class="nav-text">初始化阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E9%98%B6%E6%AE%B5"><span class="nav-number">2.4.2.</span> <span class="nav-text">注册阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B1%87%E9%9B%86%E9%98%B6%E6%AE%B5"><span class="nav-number">2.4.3.</span> <span class="nav-text">数据汇集阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90"><span class="nav-number">2.5.</span> <span class="nav-text">安全分析</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">月如霜</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false});</script></body>
+</html>
