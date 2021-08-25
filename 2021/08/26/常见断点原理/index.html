@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="遗传算法," />
+  <meta name="keywords" content="逆向，调试," />
 
 
 
@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="遗传算法https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;ae5157c26af9 遗传算法的科学定义 遗传算法的遗传操作   选择 交叉 变异   遗传算法的核心内容   参数编码 初始群体的设定 适应度函数的设计 遗传操作设计 控制参数设定  遗传算法的执行过程 首先需要声明需求点的数目，候选点的数目和设备的数目 定义Individual和Population结构体 定义距离矩阵和需求点的权">
+<meta name="description" content="常见断点的原理 个人理解：断点就是通过各种方式触发中断，然后OS将主动权交给调试器。  软件断点 如果设置断点时没有任何选项，则大多数调试器将该断点默认设置为软件断点。 内核模式中，软件断点的数量受限；用户模式中，设置软件断点无限制。 调试器通过使用指令INT 3（3号中断，机器码：0x33），重写指令的首个字节来实现软件断点。当0xCC执行后，操作系统会产生一个异常，然后将控制权转给用户模式的调">
 <meta property="og:type" content="article">
-<meta property="og:title" content="遗传算法">
-<meta property="og:url" content="http://yoursite.com/2019/03/15/%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:title" content="常见断点原理.md">
+<meta property="og:url" content="http://yoursite.com/2021/08/26/%E5%B8%B8%E8%A7%81%E6%96%AD%E7%82%B9%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="月如霜的博客">
-<meta property="og:description" content="遗传算法https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;ae5157c26af9 遗传算法的科学定义 遗传算法的遗传操作   选择 交叉 变异   遗传算法的核心内容   参数编码 初始群体的设定 适应度函数的设计 遗传操作设计 控制参数设定  遗传算法的执行过程 首先需要声明需求点的数目，候选点的数目和设备的数目 定义Individual和Population结构体 定义距离矩阵和需求点的权">
+<meta property="og:description" content="常见断点的原理 个人理解：断点就是通过各种方式触发中断，然后OS将主动权交给调试器。  软件断点 如果设置断点时没有任何选项，则大多数调试器将该断点默认设置为软件断点。 内核模式中，软件断点的数量受限；用户模式中，设置软件断点无限制。 调试器通过使用指令INT 3（3号中断，机器码：0x33），重写指令的首个字节来实现软件断点。当0xCC执行后，操作系统会产生一个异常，然后将控制权转给用户模式的调">
 <meta property="og:locale">
-<meta property="article:published_time" content="2019-03-15T10:27:52.000Z">
-<meta property="article:modified_time" content="2019-03-15T10:28:30.000Z">
+<meta property="article:published_time" content="2021-08-25T16:16:51.000Z">
+<meta property="article:modified_time" content="2021-08-25T16:17:39.855Z">
 <meta property="article:author" content="月如霜">
-<meta property="article:tag" content="遗传算法">
+<meta property="article:tag" content="逆向，调试">
 <meta name="twitter:card" content="summary">
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/03/15/遗传算法/"/>
+  <link rel="canonical" href="http://yoursite.com/2021/08/26/常见断点原理/"/>
 
 
 
 
 
-  <title>遗传算法 | 月如霜的博客</title>
+  <title>常见断点原理.md | 月如霜的博客</title>
   
 
 
@@ -253,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/15/%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/26/%E5%B8%B8%E8%A7%81%E6%96%AD%E7%82%B9%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="月如霜">
@@ -270,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">遗传算法</h1>
+          <h1 class="post-title" itemprop="name headline">常见断点原理.md</h1>
         
 
         <div class="post-meta">
@@ -282,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-15T18:27:52+08:00">
-                2019-03-15
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-26T00:16:51+08:00">
+                2021-08-26
               </time>
             
 
@@ -314,7 +314,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  245
+                  1.5k
                 </span>
               
 
@@ -330,7 +330,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  5
                 </span>
               
             </div>
@@ -351,44 +351,83 @@
       
 
       
-        <h1 id="遗传算法"><a href="#遗传算法" class="headerlink" title="遗传算法"></a>遗传算法</h1><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ae5157c26af9">https://www.jianshu.com/p/ae5157c26af9</a></p>
-<h2 id="遗传算法的科学定义"><a href="#遗传算法的科学定义" class="headerlink" title="遗传算法的科学定义"></a>遗传算法的科学定义</h2><ul>
-<li>遗传算法的遗传操作</li>
+        <h1 id="常见断点的原理"><a href="#常见断点的原理" class="headerlink" title="常见断点的原理"></a>常见断点的原理</h1><ul>
+<li>个人理解：断点就是通过各种方式触发中断，然后OS将主动权交给调试器。</li>
 </ul>
-<ol>
-<li>选择</li>
-<li>交叉</li>
-<li>变异</li>
-</ol>
-<ul>
-<li>遗传算法的核心内容</li>
-</ul>
-<ol>
-<li>参数编码</li>
-<li>初始群体的设定</li>
-<li>适应度函数的设计</li>
-<li>遗传操作设计</li>
-<li>控制参数设定</li>
-</ol>
-<h2 id="遗传算法的执行过程"><a href="#遗传算法的执行过程" class="headerlink" title="遗传算法的执行过程"></a>遗传算法的执行过程</h2><ol>
-<li>首先需要声明需求点的数目，候选点的数目和设备的数目</li>
-<li>定义<code>Individual</code>和<code>Population</code>结构体</li>
-<li>定义距离矩阵和需求点的权重</li>
-<li>定义如下函数来为后续遗传进化做准备<ul>
-<li><code>find_nearest_facility() </code>找到离某需求点权重最小的节点</li>
-<li><code>fitness_function()</code> 求适应度函数</li>
-<li><code>count_ones()</code> 计算染色体中“1”的数目</li>
-<li><code>maintain_ones_in_chromosom()</code>保持染色体中“1”的数目和设备的数目一致</li>
-<li><code>generateIndividual()</code> 生成个体</li>
-<li><code>update_best_solution()</code> 寻找本代最优解</li>
-<li><code>select_parents()</code>选择亲本</li>
-<li><code>perform_crossover()</code> 染色体交叉</li>
-<li><code>perform_mutation()</code> 染色体变异</li>
-<li><code>perform_selection()</code> 根据适应度自然选择</li>
-<li><code>genetic_evolution()</code> 遗传进化（最重要的）</li>
+<h2 id="软件断点"><a href="#软件断点" class="headerlink" title="软件断点"></a>软件断点</h2><ul>
+<li>如果设置断点时没有任何选项，则大多数调试器将该断点默认设置为软件断点。</li>
+<li>内核模式中，软件断点的数量受限；用户模式中，设置软件断点无限制。</li>
+<li>调试器通过使用指令INT 3（3号中断，机器码：0x33），重写指令的首个字节来实现软件断点。当0xCC执行后，操作系统会产生一个异常，然后将控制权转给用户模式的调试器，对执行现场进行分析，因此 INT 3 指令又被称为断点指令。</li>
+<li>工作原理：<ul>
+<li><strong>Step1：</strong>当调试器被告知在目标地址设置一个断点，首先读取目标地址的第一个字节的操作码，然后保存起来，同时把地址存储在内部的中断向量表中</li>
+<li><strong>Step2：</strong>调试器使用<code>WriteProcessMemory()</code>函数，将断点行首个单字节换成0xCC，写入刚才的地址。</li>
+<li><strong>Step3：</strong>当 CPU 执行到 0xCC时，就会触发一个 INT3 中断事件，内核例程会把这个异常通过调试子系统以调试事件的形式分发给用户模式的调试器，此时调试器就能捕捉到这个事件。</li>
+<li><strong>Step4：</strong>调试器根据EIP指针得到断点异常发生的位置，查找调试器内部的断点列表，判断发生中断事件的地址是不是自己先前设置断点的地址。如果是，就将设置断点前存储起来的操作码写回到目标地址，使得进程后续正常执行，同时执行一系列准备动作后，便允许用户进行交互式调试；如果不是，就说明导致这个异常的 INT 3 指令不是该调试器动态替换进去。</li>
+<li>注意：<ul>
+<li>在调试器下，用户看不到动态替换到程序中的 INT 3 指令的过程的。大多数调试器的做法是在被调试程序中断到调试器时，会先将所有断点位置被替换为INT 3 的指令恢复成原来的指令，然后再把控制权交给用户。</li>
+<li>对于Windows系统，WriteProcessMemory()函数能写入某一进程的内存区域（如果直接写入会出Access Violation错误）。</li>
+<li>对于 Windows系统，INT 3 异常的处理函数是操作系统的内核函数（KiTrap03）。</li>
 </ul>
 </li>
-</ol>
+</ul>
+</li>
+<li>局限性<ul>
+<li>无法应用于反调试的情况下<ul>
+<li>当软件断点改变了被调试程序的内存数据的时候，同时改变了运行时的软件的循环冗余码校验和CRC。在逆向工程中一般是对进程的内存数据进行运算， 然后将 hash 值和此前原始的 hash 值进行比较，以判断数据是否被改变。如果不同，说明数据被改动了，校验失败。病毒程序经常检测程序在内存中运行的代码的 CRC 值是否相同。如果不同，说明数据被修改，则自动杀掉自己。</li>
+</ul>
+</li>
+<li>只能作用于代码区，不适用于数据段和I/O空间。</li>
+<li>对于ROM中执行的程序，由于是只读内存，所以无法写入断点指令。</li>
+<li>当中断向量表被破坏后，无法正常工作。</li>
+</ul>
+</li>
+</ul>
+<h2 id="硬件断点"><a href="#硬件断点" class="headerlink" title="硬件断点"></a>硬件断点</h2><ul>
+<li>应用于想给代码设置断点，但又不能修改代码的情形下。</li>
+<li>一个CPU一般有8个调试寄存器（DR0 ~ DR7 寄存器），用于管理硬件断点<ul>
+<li> DR0 ~DR3： 存储硬件断点地址。</li>
+<li> DR4 和 DR5： 保留。</li>
+<li> DR6：调试状态寄存器，用于向调试器报告事件的详细信息，以供调试器判断发生的是何种事件。</li>
+<li> DR7：调试控制寄存器，用于定义断点的中断条件。</li>
+</ul>
+</li>
+<li>工作原理：<ul>
+<li>INT1（1 号中断）负责硬件中断和步进事件。步进（ Single-step ）意味着一步一步的执行指令，从而精确的观察关键代码以便监视数据的变化。</li>
+<li>在 CPU 每次执行代码之前，都会先确认当前将执行的代码的地址是否是硬件断点的地址，同时也要确认是否有代码要访问被设置了硬件断点的内存区域。</li>
+<li>如果任何储存在 DR0~DR3 中的地址所指向的区域被访问了，就会触发 INT1 中断，同时暂停 CPU；如果没有，CPU 执行代码，到下一行代码时，CPU 继续重复上面的检查。</li>
+</ul>
+</li>
+<li>局限性<ul>
+<li>同一时间只能设置四个断点。</li>
+<li>只能检测 4 个字节的内存数据改变，无法跟踪大块内存数据。</li>
+</ul>
+</li>
+</ul>
+<h2 id="内存断点"><a href="#内存断点" class="headerlink" title="内存断点"></a>内存断点</h2><ul>
+<li>克服了硬件断点只能应用于局部内存的弊端。</li>
+<li>本质<ul>
+<li>当一个调试器设置了一个内存断点的时候，其实是改变了内存中某个块或者页的权限。</li>
+<li>一个内存页是操作系统处理的最小的内存单位。一个内存页被申请成功以后，就拥有了一个权限集，它决定了内存该如何被访问。<ul>
+<li>可执行页：允许执行但不允许读或写，否则抛出访问异常。</li>
+<li>可读页：只允许从页面中读取数据，其余的则抛出访问异常。</li>
+<li>可写页：允许将数据写入页面。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="单步执行"><a href="#单步执行" class="headerlink" title="单步执行"></a>单步执行</h2><ul>
+<li>调试器如何实现了单步调试呢？<ul>
+<li>x86处理器引入的PSW寄存器，有一个陷阱标志位，名为Trap Flag，简称TF。</li>
+<li>当TF为1时，CPU每执行一条指令便会产生一个调试异常，中断到调试异常处理程序。</li>
+</ul>
+</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/gengzhikui1992/article/details/111856016">调试器工作原理–CPU软件断点/硬件断点/单步执行标识</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34003929">调试程序时，设置断点的原理是什么？</a></li>
+<li><a target="_blank" rel="noopener" href="https://wizardforcel.gitbooks.io/grey-hat-python/content/9.html">灰帽python之旅</a></li>
+</ul>
 
       
     </div>
@@ -409,7 +448,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2019/03/15/%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95/" title="遗传算法">http://yoursite.com/2019/03/15/%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95/</a>
+    <a href="http://yoursite.com/2021/08/26/%E5%B8%B8%E8%A7%81%E6%96%AD%E7%82%B9%E5%8E%9F%E7%90%86/" title="常见断点原理.md">http://yoursite.com/2021/08/26/%E5%B8%B8%E8%A7%81%E6%96%AD%E7%82%B9%E5%8E%9F%E7%90%86/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -424,7 +463,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95/" rel="tag"># 遗传算法</a>
+            <a href="/tags/%E9%80%86%E5%90%91%EF%BC%8C%E8%B0%83%E8%AF%95/" rel="tag"># 逆向，调试</a>
           
         </div>
       
@@ -437,8 +476,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/03/03/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E2%80%94%E2%80%94%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" rel="next" title="数据结构——排序算法">
-                <i class="fa fa-chevron-left"></i> 数据结构——排序算法
+              <a href="/2019/03/19/%E5%8A%A8%E6%80%81%E6%BA%90%E8%B7%AF%E7%94%B1(DSR)%E5%8D%8F%E8%AE%AE%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/" rel="next" title="动态源路由(DSR)协议代码分析">
+                <i class="fa fa-chevron-left"></i> 动态源路由(DSR)协议代码分析
               </a>
             
           </div>
@@ -447,8 +486,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/03/17/Pareto%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="prev" title="Pareto基础知识点">
-                Pareto基础知识点 <i class="fa fa-chevron-right"></i>
+              <a href="/2021/08/26/%E5%B8%B8%E8%A7%81%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A/" rel="prev" title="常见的函数调用约定">
+                常见的函数调用约定 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -604,7 +643,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">遗传算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E7%9A%84%E7%A7%91%E5%AD%A6%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.</span> <span class="nav-text">遗传算法的科学定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">遗传算法的执行过程</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%96%AD%E7%82%B9%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">常见断点的原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E6%96%AD%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">软件断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E6%96%AD%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">硬件断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%96%AD%E7%82%B9"><span class="nav-number">1.3.</span> <span class="nav-text">内存断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E6%AD%A5%E6%89%A7%E8%A1%8C"><span class="nav-number">1.4.</span> <span class="nav-text">单步执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.5.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
             
 
           </div>
